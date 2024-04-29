@@ -25,6 +25,7 @@ let package = Package(
         .target(
             name: "MySwiftPackage",
            dependencies: ["DocumentReader"],
+            
 			path: "Sources",
 			resources: [
 				.process("Resource/Media.xcassets"),
