@@ -33,7 +33,7 @@ let package = Package(
                 .process("Classes/CertificatesPA.bundle"),
                 .process("Classes/CertificatesTA.bundle"),
                 .process("Classes/iPass.license"),
-               
+              
                //.copy("Resource/DocumentReader.xcframework")
 			]),
         .binaryTarget(
