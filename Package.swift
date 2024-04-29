@@ -29,7 +29,7 @@ let package = Package(
 			path: "Sources",
 			resources: [
 				.process("Resource/Media.xcassets"),
-                .process("iPass.license"),
+                .process("Resource/iPass.license"),
                 .process("ResourceFile/Certificates.bundle"),
                 .process("ResourceFile/CertificatesPA.bundle"),
                 .process("ResourceFile/CertificatesTA.bundle")
