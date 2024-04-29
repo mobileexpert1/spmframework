@@ -24,7 +24,7 @@ let package = Package(
         // Targets can depend on other targets in this package, and on products in packages this package depends on. "Starscream", "SwiftEventBus",
         .target(
             name: "MySwiftPackage",
-           dependencies: ["DocumentReader"],
+           dependencies: ["DocumentReader", "DocumentReaderCore", "RegulaCommon"],
             
 			path: "Sources",
 			resources: [
@@ -38,6 +38,12 @@ let package = Package(
         .binaryTarget(
             name: "DocumentReader",
             path: "DocumentReader.xcframework"),
+        .binaryTarget(
+            name: "DocumentReaderCore",
+            path: "DocumentReaderCore.xcframework"),
+        .binaryTarget(
+            name: "RegulaCommon",
+            path: "RegulaCommon.xcframework"),
         //.target(name: "")
     ]
 )
