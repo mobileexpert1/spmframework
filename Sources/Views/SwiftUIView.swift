@@ -15,11 +15,26 @@ public struct SwiftUIView: View {
 	public init() {
         
 
-        DocReader.shared.processParams.multipageProcessing = 0
-        
+       // DocReader.shared.processParams.multipageProcessing = 0
+        dataBaseHandling()
         
     }
     
+    
+    func dataBaseHandling() {
+        DocReader.shared.prepareDatabase(databaseID: "Full", progressHandler: { (progress) in
+            print(progress) // progress block
+            print("#$@#$@#$")
+        }, completion: { (success, error) in
+            if success {
+                print("#$@#$@#$wwww")
+                print(success) // Success state
+            } else {
+                print("#$@#$@#$666")
+                print(error) // Error status
+            }
+        })
+    }
     
     
 	public var body: some View {
