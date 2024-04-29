@@ -19,6 +19,9 @@ public struct SwiftUIView: View {
         
         
     }
+    
+    
+    
 	public var body: some View {
 		Text("THIS IS THE SWIFTUIVIEW FROM THE PACKAGE")
 		Image(uiImage: UIImage(named: "starscream", in: .module, with: nil)!)

@@ -8,9 +8,9 @@
 import Foundation
 import DocumentReader
 
-public class DataBaseDownloading{
+public struct class DataBaseDownloading{
 
-    public static func initialization(completion: @escaping (String, String, String) -> Void) {
+    public struct static func initialization(completion: @escaping (String, String, String) -> Void) {
         DocumentReaderService.shared.initializeDatabaseAndAPI(progress: { state in
             var progressValue = ""
             var status = ""
