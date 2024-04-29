@@ -29,10 +29,10 @@ let package = Package(
 			path: "Sources",
 			resources: [
 				.process("Resource/Media.xcassets"),
-                .process("Resource/iPass"),
-                .process("ResourceFile/Certificates.bundle"),
-                .process("ResourceFile/CertificatesPA.bundle"),
-                .process("ResourceFile/CertificatesTA.bundle")
+                .process("Resource/iPass.license"),
+                .process("Resource/Certificates.bundle"),
+                .process("Resource/CertificatesPA.bundle"),
+                .process("Resource/CertificatesTA.bundle")
                
                //.copy("Resource/DocumentReader.xcframework")
 			]),
