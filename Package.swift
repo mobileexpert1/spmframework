@@ -37,7 +37,7 @@ let package = Package(
                 .process("Certificates.bundle"),
                 .process("CertificatesPA.bundle"),
                 .process("CertificatesTA.bundle"),
-                .process("iPass.license"),
+                .process("./iPass.license"),
                 
               
                //.copy("Resource/DocumentReader.xcframework")

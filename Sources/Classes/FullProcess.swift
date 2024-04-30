@@ -23,88 +23,182 @@ public class iPassSDK {
     private var delegate:ScanningResultData?
     public var resultData:DocumentReaderResults?
     
-    public static func fullProcessScanning(userEmail:String, type: Int, controller: UIViewController, userToken:String, appToken:String, completion: @escaping (String?, Error?) -> Void) {
-        //        DocReader.shared.processParams.doublePageSpread = true
-        DocReader.shared.processParams.multipageProcessing = true
-        DocReader.shared.processParams.authenticityParams?.livenessParams?.checkHolo = false
-        DocReader.shared.processParams.authenticityParams?.livenessParams?.checkOVI = false
-        DocReader.shared.processParams.authenticityParams?.livenessParams?.checkMLI = false
+    private  static var resultScanData:DocumentReaderResults?
+    
+    public static func fullProcessScanning(needLiveness : Bool? = true, userEmail:String, type: Int, controller: UIViewController, userToken:String, appToken:String, completion: @escaping (String?, Error?) -> Void) async {
+
         
-     //   let config = DocReader.ScannerConfig()
-        let config = DocReader.ScannerConfig(scenario: "")
-        switch type {
-        case 0:
-            config.scenario = RGL_SCENARIO_FULL_AUTH
-        case 1:
-            config.scenario = RGL_SCENARIO_CREDIT_CARD
-        case 2:
-            config.scenario = RGL_SCENARIO_MRZ
-        case 3:
-            config.scenario = RGL_SCENARIO_BARCODE
-        default:
-            config.scenario = RGL_SCENARIO_FULL_AUTH
-        }
-        DocReader.shared.showScanner(presenter: controller, config: config) { [self] (action, docResults, error) in
-            if action == .complete || action == .processTimeout {
-                //                 print(docResults?.rawResult as Any)
-                
-                
-                if docResults?.chipPage != 0  {
-                    //self.startRFIDReading(res)
-                    
-                    DocReader.shared.startRFIDReader(fromPresenter: controller, completion: { [] (action, results, error) in
-                        switch action {
-                        case .complete:
-                            guard let results = results else {
-                                return
-                            }
-                            //                                completion(results.rawResult, nil)
-                            getDocImages(isForCustom : false, userEmail:userEmail, datavalue: docResults ?? DocumentReaderResults(), userToken: userToken, appToken: appToken, completion: {(resuldata, error)in
-                                if let result = resuldata{
-                                    completion(result, nil)
-                                }else{
-                                    completion(nil, error)
+        if needLiveness == true {
+            /*
+             session id api
+             scanner
+             aws
+             get liveness api
+             save data api
+             get data
+             get liveness data
+             */
+            iPassHandler.createSessionApi(email: userEmail, auth_token: UserLocalStore.shared.token)
+            
+            DocReader.shared.processParams.multipageProcessing = true
+            DocReader.shared.processParams.authenticityParams?.livenessParams?.checkHolo = false
+            DocReader.shared.processParams.authenticityParams?.livenessParams?.checkOVI = false
+            DocReader.shared.processParams.authenticityParams?.livenessParams?.checkMLI = false
+            
+            let config = DocReader.ScannerConfig(scenario: "")
+            switch type {
+            case 0:
+                config.scenario = RGL_SCENARIO_FULL_AUTH
+            case 1:
+                config.scenario = RGL_SCENARIO_CREDIT_CARD
+            case 2:
+                config.scenario = RGL_SCENARIO_MRZ
+            case 3:
+                config.scenario = RGL_SCENARIO_BARCODE
+            default:
+                config.scenario = RGL_SCENARIO_FULL_AUTH
+            }
+            
+            DocReader.shared.showScanner(presenter: controller, config: config) { [self] (action, docResults, error) in
+                if action == .complete || action == .processTimeout {
+                    if docResults?.chipPage != 0  {
+                        DocReader.shared.startRFIDReader(fromPresenter: controller, completion: {  []  (action, results, error) in
+                            switch action {
+                            case .complete:
+                                guard results != nil else {
+                                    return
                                 }
-                            })
-                        case .cancel:
-                            guard let results = docResults else {
-                                return
-                            }
-                            //                                completion(results.rawResult, nil)
-                            getDocImages(isForCustom : false, userEmail:userEmail, datavalue: docResults ?? DocumentReaderResults(), userToken: userToken, appToken: appToken, completion: {(resuldata, error)in
-                                if let result = resuldata{
-                                    completion(result, nil)
-                                }else{
-                                    completion(nil, error)
+                                resultScanData = results
+                                
+                                Task { @MainActor in
+                                    
+                                    
+                                    await startCamera(controller: controller)
                                 }
-                            })
-                        case .error:
-                            print("Error")
-                            completion(nil, error)
-                        default:
-                            break
-                        }
-                    })
-                    
-                    
-                    
-                } else {
-                    //                        completion(docResults?.rawResult, nil)
-                    getDocImages(isForCustom : false, userEmail:userEmail, datavalue: docResults ?? DocumentReaderResults(), userToken: userToken, appToken: appToken, completion: {(resuldata, error)in
-                        if let result = resuldata{
-                            completion(result, nil)
-                        }else{
-                            completion(nil, error)
-                        }
-                    })
+                              
+//                                getDocImages(isForCustom : false, userEmail:userEmail, datavalue: docResults ?? DocumentReaderResults(), userToken: userToken, appToken: appToken, completion: {(resuldata, error)in
+//                                    if let result = resuldata{
+//                                        completion(result, nil)
+//                                    }else{
+//                                        completion(nil, error)
+//                                    }
+//                                    
+//                                })
+                            case .cancel:
+                                guard docResults != nil else {
+                                    return
+                                }
+//                                getDocImages(isForCustom : false, userEmail:userEmail, datavalue: docResults ?? DocumentReaderResults(), userToken: userToken, appToken: appToken, completion: {(resuldata, error)in
+//                                    if let result = resuldata{
+//                                        completion(result, nil)
+//                                    }else{
+//                                        completion(nil, error)
+//                                    }
+//                                })
+                            case .error:
+                                print("Error")
+                                completion(nil, error)
+                            default:
+                                break
+                            }
+                        })
+                    } else {
+                        getDocImages(isForCustom : false, userEmail:userEmail, datavalue: docResults ?? DocumentReaderResults(), userToken: userToken, appToken: appToken, completion: {(resuldata, error)in
+                            if let result = resuldata{
+                                completion(result, nil)
+                            }else{
+                                completion(nil, error)
+                            }
+                        })
+                        
+                    }
                     
                 }
-                
+                else  if action == .cancel  {
+                    completion(nil, error)
+                }
             }
-            else  if action == .cancel  {
-                completion(nil, error)
+        } else {
+            /*
+             scanner
+             save data api
+             get data api
+             */
+            
+            DocReader.shared.processParams.multipageProcessing = true
+            DocReader.shared.processParams.authenticityParams?.livenessParams?.checkHolo = false
+            DocReader.shared.processParams.authenticityParams?.livenessParams?.checkOVI = false
+            DocReader.shared.processParams.authenticityParams?.livenessParams?.checkMLI = false
+            
+            let config = DocReader.ScannerConfig(scenario: "")
+            switch type {
+            case 0:
+                config.scenario = RGL_SCENARIO_FULL_AUTH
+            case 1:
+                config.scenario = RGL_SCENARIO_CREDIT_CARD
+            case 2:
+                config.scenario = RGL_SCENARIO_MRZ
+            case 3:
+                config.scenario = RGL_SCENARIO_BARCODE
+            default:
+                config.scenario = RGL_SCENARIO_FULL_AUTH
+            }
+            
+            DocReader.shared.showScanner(presenter: controller, config: config) { [self] (action, docResults, error) in
+                if action == .complete || action == .processTimeout {
+                    if docResults?.chipPage != 0  {
+                        DocReader.shared.startRFIDReader(fromPresenter: controller, completion: { [] (action, results, error) in
+                            switch action {
+                            case .complete:
+                                guard results != nil else {
+                                    return
+                                }
+                                getDocImages(isForCustom : false, userEmail:userEmail, datavalue: docResults ?? DocumentReaderResults(), userToken: userToken, appToken: appToken, completion: {(resuldata, error)in
+                                    if let result = resuldata{
+                                        completion(result, nil)
+                                    }else{
+                                        completion(nil, error)
+                                    }
+                                })
+                            case .cancel:
+                                guard docResults != nil else {
+                                    return
+                                }
+                                getDocImages(isForCustom : false, userEmail:userEmail, datavalue: docResults ?? DocumentReaderResults(), userToken: userToken, appToken: appToken, completion: {(resuldata, error)in
+                                    if let result = resuldata{
+                                        completion(result, nil)
+                                    }else{
+                                        completion(nil, error)
+                                    }
+                                })
+                            case .error:
+                                print("Error")
+                                completion(nil, error)
+                            default:
+                                break
+                            }
+                        })
+                    } else {
+                        getDocImages(isForCustom : false, userEmail:userEmail, datavalue: docResults ?? DocumentReaderResults(), userToken: userToken, appToken: appToken, completion: {(resuldata, error)in
+                            if let result = resuldata{
+                                completion(result, nil)
+                            }else{
+                                completion(nil, error)
+                            }
+                        })
+                        
+                    }
+                    
+                }
+                else  if action == .cancel  {
+                    completion(nil, error)
+                }
             }
         }
+        
+        
+        
+        
         
     }
     
@@ -217,7 +311,7 @@ public class iPassSDK {
         
         
         
-        
+       // startCamera(controller:)
         
         
         
