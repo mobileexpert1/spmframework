@@ -23,7 +23,7 @@ import DocumentReader
 import UIKit
 
 
-struct FaceClass: View {
+public struct FaceClass: View {
     @State private var isPresentingLiveness = true
     @State private var isPresentingUserInfo = false
     
@@ -33,7 +33,7 @@ struct FaceClass: View {
     var results: DocumentReaderResults!
     var isScanningTypeIndex:Int?
 
-    var body: some View {
+    public var body: some View {
         FaceLivenessDetectorView(
             sessionID: sessoinIdValue,
             region: "us-east-1",
