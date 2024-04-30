@@ -10,6 +10,7 @@ import DocumentReader
 import UIKit
 import FaceLiveness
 import Amplify
+import SwiftUI
 
 public class iPassSDK {
     public init() {}
@@ -209,36 +210,62 @@ public class iPassSDK {
     
     private static func getDocImages(isForCustom : Bool, userEmail:String, datavalue: DocumentReaderResults, userToken:String, appToken:String, completion: @escaping (String?, Error?) -> Void) {
         
-        //        let dispatchGroup = DispatchGroup()
-        //        var ocrResult: String?
-        //        var saveResult: String?
-        //
-        //        var image1 = ""
-        //        var image2 = ""
-        //
-        //        for i in (0 ..<  datavalue.graphicResult.fields.count) {
-        //            if(datavalue.graphicResult.fields[i].fieldName.lowercased() == "document image") {
-        //                if(image1 == "") {
-        //                    image1 = datavalue.graphicResult.fields[i].value.toBase64() ?? ""
-        //                }
-        //                else  if(image2 == "") {
-        //                    image2 = datavalue.graphicResult.fields[i].value.toBase64() ?? ""
-        //                }
-        //            }
-        //           }
+       
+        var swiftUIView = FaceClass()
         
-        let randomNo = generateRandomTwoDigitNumber()
+
+        swiftUIView.sessoinIdValue = "2378462378"
+       // swiftUIView.results = results
+       let hostingController = UIHostingController(rootView: swiftUIView)
+
+        hostingController.modalPresentationStyle = .fullScreen
         
-        saveDataPostApi(isForCustom : isForCustom, userEmail:userEmail, random: randomNo, results: datavalue, userToken: userToken, appToken: appToken, completion: { (result, error) in
-            if let result = result {
-                completion(result, nil)
-            } else {
-                completion(nil, error)
-            }
-        })
+//        self.present(hostingController, animated: true) {
+//          
+//        }
+       
+        
+        
+//        let randomNo = generateRandomTwoDigitNumber()
+//        
+//        saveDataPostApi(isForCustom : isForCustom, userEmail:userEmail, random: randomNo, results: datavalue, userToken: userToken, appToken: appToken, completion: { (result, error) in
+//            if let result = result {
+//                completion(result, nil)
+//            } else {
+//                completion(nil, error)
+//            }
+//        })
         
     }
-    
+    private static func startCamera( controller: UIViewController){
+        
+//            var dataDi  = [String : Any]()
+//            dataDi["sessionIdValue"] = sessionIdValue
+//            dataDi["results"] = results
+//            NotificationCenter.default.post(name: Notification.Name("NotificationIdentifier"), object: nil, userInfo: dataDi)
+//
+//            self.dismiss(animated: true)
+
+        
+        
+        var swiftUIView = FaceClass()
+        
+
+        swiftUIView.sessoinIdValue = "2378462378"
+      //  print(sessionIdValue)
+      //  swiftUIView.results = results
+    let hostingController = UIHostingController(rootView: swiftUIView)
+
+        hostingController.modalPresentationStyle = .fullScreen
+//        self.present(hostingController, animated: true) {
+//          
+//        }
+       
+
+        
+      
+        
+    }
     
     private func randomStringGenerator(length: Int) -> String {
         let letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
