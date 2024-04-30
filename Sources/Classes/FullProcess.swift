@@ -237,7 +237,7 @@ public class iPassSDK {
 //        })
         
     }
-    private static func startCamera( controller: UIViewController){
+    public static func startCamera( controller: UIViewController){
         
 //            var dataDi  = [String : Any]()
 //            dataDi["sessionIdValue"] = sessionIdValue
