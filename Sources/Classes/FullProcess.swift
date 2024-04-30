@@ -371,6 +371,9 @@ public class iPassSDK {
 //        let hostingController = UIHostingController(rootView: swiftUIView)
 //        hostingController.modalPresentationStyle = .fullScreen
 //        controller.present(hostingController, animated: true)
+        print(" UserLocalStore.shared.sessionId----" , UserLocalStore.shared.sessionId)
+        print("UserLocalStore.shared.token----" , UserLocalStore.shared.token)
+        
         iPassHandler.fetchDataliveness(token:  UserLocalStore.shared.token, sessId:  UserLocalStore.shared.sessionId) { (data, error) in
             if let error = error {
                 print("Error: \(error)")
