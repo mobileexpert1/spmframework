@@ -1,26 +1,25 @@
-//
 //  DBDownloading.swift
 //  IpassFrameWork1
-//
 //  Created by Mobile on 10/04/24.
-//
 
 import Foundation
 import DocumentReader
 import Amplify
 import AWSCognitoAuthPlugin
-//import Amplify
-public class DataBaseDownloading{
 
-    public static func initialization(completion: @escaping (String, String, String) -> Void) {
-        
+public class DataBaseDownloading{
+    
+    public static func initialization(completion: @escaping (Bool, String, String, String) -> Void) {
+        var amplifyStatus = false
         do {
             Amplify.Logging.logLevel = .verbose
             try Amplify.add(plugin: AWSCognitoAuthPlugin())
-               try Amplify.configure()
-           } catch {
-               print("An error occurred setting up Amplify: \(error)")
-           }
+            try Amplify.configure()
+            amplifyStatus = true
+        } catch {
+            amplifyStatus = false
+            print("An error occurred setting up Amplify: \(error)")
+        }
         DocumentReaderService.shared.initializeDatabaseAndAPI(progress: { state in
             var progressValue = ""
             var status = ""
@@ -31,45 +30,13 @@ public class DataBaseDownloading{
                 progressValue = "Downloading database: \(progressString)%"
             case .initializingAPI:
                 status = "Start Now"
-               // APIHandler.LoginAuthAPi()
-//                APIHandler.fetchData(token:  UserLocalStore.shared.token, sessId:  UserLocalStore.shared.sessionId) { result,<#arg#>  in
-//                    switch result {
-//                        case .success(let json):
-//                        
-//                            print("Received JSON data:", json)
-//                            
-//                            
-//                        case .failure(let error):
-//                           
-//                            print("Error fetching data:", error)
-//                           
-//                        }
-//                    }
-//                APIHandler.fetchData(token: UserLocalStore.shared.token, sessId: UserLocalStore.shared.token) { success, response in
-//                    if let success = success {
-//                        if success {
-//                            print("API request successful. Response: \(response ?? "")")
-//                        } else {
-//                            print("API request failed. Error: \(response ?? "")")
-//                        }
-//                    } else {
-//                        print("Unknown error occurred.")
-//                    }
-//                }
-                
-              
             case .completed:
-//                DispatchQueue.main.async {
-//                StartFullProcess.fullProcessScanning(type: 0, controller: controller)
-//                }
-//
                 break
             case .error(let text):
                 validationError = text
                 print(text)
             }
-            
-            completion(progressValue, status, validationError)
+            completion(amplifyStatus, progressValue, status, validationError)
         })
     }
     
