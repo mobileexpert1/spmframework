@@ -84,8 +84,13 @@ public class iPassSDK {
                                     //                                    }else{
                                     //                                        completion(nil, error)
                                     //                                    }
-                                    //                                    
+                                    //
                                     //                                })
+                                    Task { @MainActor in
+                                        
+                                        
+                                        await startCamera(controller: controller)
+                                    }
                                 case .cancel:
                                     guard docResults != nil else {
                                         return
@@ -97,6 +102,11 @@ public class iPassSDK {
                                     //                                        completion(nil, error)
                                     //                                    }
                                     //                                })
+                                    Task { @MainActor in
+                                        
+                                        
+                                        await startCamera(controller: controller)
+                                    }
                                 case .error:
                                     print("Error")
                                     completion(nil, error)
@@ -104,6 +114,11 @@ public class iPassSDK {
                                     break
                                 }
                             })
+                            Task { @MainActor in
+                                
+                                
+                                await startCamera(controller: controller)
+                            }
                         } else {
                             getDocImages(isForCustom : false, userEmail:userEmail, datavalue: docResults ?? DocumentReaderResults(), userToken: userToken, appToken: appToken, completion: {(resuldata, error)in
                                 if let result = resuldata{
@@ -112,6 +127,11 @@ public class iPassSDK {
                                     completion(nil, error)
                                 }
                             })
+                            Task { @MainActor in
+                                
+                                
+                                await startCamera(controller: controller)
+                            }
                             
                         }
                         
