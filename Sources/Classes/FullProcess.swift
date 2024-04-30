@@ -8,6 +8,8 @@
 import Foundation
 import DocumentReader
 import UIKit
+import FaceLiveness
+import Amplify
 
 public class iPassSDK {
     public init() {}

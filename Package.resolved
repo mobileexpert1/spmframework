@@ -1,0 +1,79 @@
+{
+  "object": {
+    "pins": [
+      {
+        "package": "Amplify",
+        "repositoryURL": "https://github.com/aws-amplify/amplify-swift",
+        "state": {
+          "branch": null,
+          "revision": "adf5a2e0cc8e240ef12d2f63054806d1ef3dcc47",
+          "version": "2.29.3"
+        }
+      },
+      {
+        "package": "AmplifyUtilsNotifications",
+        "repositoryURL": "https://github.com/aws-amplify/amplify-swift-utils-notifications.git",
+        "state": {
+          "branch": null,
+          "revision": "959eec669ba97c7d923b963c3e66ca8a0b2737f6",
+          "version": "1.1.1"
+        }
+      },
+      {
+        "package": "AmplifyUILiveness",
+        "repositoryURL": "https://github.com/aws-amplify/amplify-ui-swift-liveness",
+        "state": {
+          "branch": null,
+          "revision": "efa3e179042912987f1f0c5c9e0f48193007fc80",
+          "version": "1.2.12"
+        }
+      },
+      {
+        "package": "aws-crt-swift",
+        "repositoryURL": "https://github.com/awslabs/aws-crt-swift",
+        "state": {
+          "branch": null,
+          "revision": "0d0a0cf2e2cb780ceeceac190b4ede94f4f96902",
+          "version": "0.26.0"
+        }
+      },
+      {
+        "package": "aws-sdk-swift",
+        "repositoryURL": "https://github.com/awslabs/aws-sdk-swift.git",
+        "state": {
+          "branch": null,
+          "revision": "485501db8b0c57d6636c2b33a03dcd77ee0911f9",
+          "version": "0.36.1"
+        }
+      },
+      {
+        "package": "smithy-swift",
+        "repositoryURL": "https://github.com/smithy-lang/smithy-swift",
+        "state": {
+          "branch": null,
+          "revision": "64e66f3e3ac07d4180c2460a7af6e4ba4b92e9cb",
+          "version": "0.41.0"
+        }
+      },
+      {
+        "package": "SQLite.swift",
+        "repositoryURL": "https://github.com/stephencelis/SQLite.swift.git",
+        "state": {
+          "branch": null,
+          "revision": "5f5ad81ac0d0a0f3e56e39e646e8423c617df523",
+          "version": "0.13.2"
+        }
+      },
+      {
+        "package": "swift-log",
+        "repositoryURL": "https://github.com/apple/swift-log.git",
+        "state": {
+          "branch": null,
+          "revision": "e97a6fcb1ab07462881ac165fdbb37f067e205d5",
+          "version": "1.5.4"
+        }
+      }
+    ]
+  },
+  "version": 1
+}

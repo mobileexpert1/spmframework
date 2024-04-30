@@ -1,4 +1,5 @@
     import XCTest
+
     @testable import MySwiftPackage
 
     final class MySwiftPackageTests: XCTestCase {

@@ -7,7 +7,7 @@
 
 import Foundation
 import DocumentReader
-
+//import Amplify
 public class DataBaseDownloading{
 
     public static func initialization(completion: @escaping (String, String, String) -> Void) {

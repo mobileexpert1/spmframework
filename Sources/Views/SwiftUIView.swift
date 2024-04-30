@@ -9,6 +9,7 @@ import Foundation
 import SwiftUI
 import DocumentReader
 //import FaceLiveness
+//import Amplify
 
 @available(iOS 13.0, *)
 public struct SwiftUIView: View {
