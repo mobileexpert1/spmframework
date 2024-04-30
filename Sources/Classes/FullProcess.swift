@@ -284,7 +284,7 @@ public class iPassSDK {
        
        DispatchQueue.main.async {
            var swiftUIView = FaceClass()
-           swiftUIView.sessoinIdValue = "2378462378"
+           swiftUIView.sessoinIdValue = "ddd43f96-279e-4a0c-977d-81f8eece268f"
            let hostingController = UIHostingController(rootView: swiftUIView)
            hostingController.modalPresentationStyle = .fullScreen
            controller.present(hostingController, animated: true)
