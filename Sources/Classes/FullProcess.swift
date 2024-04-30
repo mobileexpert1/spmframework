@@ -371,7 +371,24 @@ public class iPassSDK {
 //        let hostingController = UIHostingController(rootView: swiftUIView)
 //        hostingController.modalPresentationStyle = .fullScreen
 //        controller.present(hostingController, animated: true)
-
+        iPassHandler.fetchDataliveness(token:  UserLocalStore.shared.token, sessId:  UserLocalStore.shared.sessionId) { (data, error) in
+            if let error = error {
+                print("Error: \(error)")
+                return
+            }
+            
+            if let data = data {
+                if let dataString = String(data: data, encoding: .utf8) {
+                    print("getDataFromAPI completed")
+                    print("dataString------>", dataString)
+                  //  completion(dataString, nil)
+                    
+                } else {
+                    print("Error converting data to string.")
+                }
+            }
+            
+        }
     }
     
    private static func fetchCurrentAuthSession( controller: UIViewController) async {

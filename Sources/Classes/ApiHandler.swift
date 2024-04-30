@@ -177,7 +177,7 @@ public class iPassHandler {
     
     
     public static func fetchDataliveness(token: String, sessId: String, completion: @escaping (Data?, Error?) -> Void) {
-      
+                                                     
         if var urlComponents = URLComponents(string: "https://plusapi.ipass-mena.com/api/v1/ipass/get/liveness/facesimilarity/details") {
             urlComponents.queryItems = [
                 URLQueryItem(name: "token", value: token),
