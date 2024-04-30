@@ -1,47 +1,43 @@
+//
 //  DBDownloading.swift
 //  IpassFrameWork1
+//
 //  Created by Mobile on 10/04/24.
+//
 
 import Foundation
 import DocumentReader
 import Amplify
 import AWSCognitoAuthPlugin
-
+//import Amplify
 public class DataBaseDownloading{
     
-    public static func initialization(completion: @escaping (Bool, Double, Bool, String) -> Void) {
-        var amplifyStatus = false
+    public static func initialization(completion: @escaping (String, String, String) -> Void) {
+        
         do {
             Amplify.Logging.logLevel = .verbose
             try Amplify.add(plugin: AWSCognitoAuthPlugin())
             try Amplify.configure()
-            amplifyStatus = true
         } catch {
-            amplifyStatus = false
             print("An error occurred setting up Amplify: \(error)")
         }
         DocumentReaderService.shared.initializeDatabaseAndAPI(progress: { state in
-            var progressValue = Double()
-            var status = false
+            var progressValue = ""
+            var status = ""
             var validationError = ""
             switch state {
             case .downloadingDatabase(progress: let progress):
-//                let progressString = String(format: "%.1f", progress * 100)
-//                progressValue = "Downloading database: \(progressString)%"
-                progressValue = progress
-                if progressValue == 100.0 {
-                    status = true
-                }
+                let progressString = String(format: "%.1f", progress * 100)
+                progressValue = "Downloading database: \(progressString)%"
             case .initializingAPI:
-                status = true
+                status = "Start Now"
             case .completed:
                 break
             case .error(let text):
-                status = false
                 validationError = text
                 print(text)
             }
-            completion(amplifyStatus, progressValue, status, validationError)
+            completion(progressValue, status, validationError)
         })
     }
     
