@@ -257,6 +257,7 @@ public class iPassSDK {
     let hostingController = UIHostingController(rootView: swiftUIView)
 
         hostingController.modalPresentationStyle = .fullScreen
+        controller.present(hostingController, animated: true)
 //        self.present(hostingController, animated: true) {
 //          
 //        }
