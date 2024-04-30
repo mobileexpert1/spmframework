@@ -11,6 +11,9 @@ import UIKit
 import FaceLiveness
 import Amplify
 import SwiftUI
+import Amplify
+import AWSCognitoAuthPlugin
+
 
 public class iPassSDK {
     public init() {}
@@ -246,7 +249,13 @@ public class iPassSDK {
 //
 //            self.dismiss(animated: true)
 
-        
+        do {
+            Amplify.Logging.logLevel = .verbose
+            try Amplify.add(plugin: AWSCognitoAuthPlugin())
+               try Amplify.configure()
+           } catch {
+               print("An error occurred setting up Amplify: \(error)")
+           }
         
         var swiftUIView = FaceClass()
         
