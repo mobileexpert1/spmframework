@@ -213,15 +213,16 @@ public class iPassSDK {
     
     private static func getDocImages(isForCustom : Bool, userEmail:String, datavalue: DocumentReaderResults, userToken:String, appToken:String, completion: @escaping (String?, Error?) -> Void) {
         
-       
-        var swiftUIView = FaceClass()
+     
         
-
-        swiftUIView.sessoinIdValue = "2378462378"
-       // swiftUIView.results = results
-       let hostingController = UIHostingController(rootView: swiftUIView)
-
-        hostingController.modalPresentationStyle = .fullScreen
+        
+        
+        
+        
+        
+        
+        
+        
         
 //        self.present(hostingController, animated: true) {
 //          
@@ -240,42 +241,76 @@ public class iPassSDK {
 //        })
         
     }
-    public static func startCamera( controller: UIViewController){
+    
+    
+    
+    public static func startCamera( controller: UIViewController) async {
         
-//            var dataDi  = [String : Any]()
-//            dataDi["sessionIdValue"] = sessionIdValue
-//            dataDi["results"] = results
-//            NotificationCenter.default.post(name: Notification.Name("NotificationIdentifier"), object: nil, userInfo: dataDi)
-//
-//            self.dismiss(animated: true)
-
-        do {
-            Amplify.Logging.logLevel = .verbose
-            try Amplify.add(plugin: AWSCognitoAuthPlugin())
-               try Amplify.configure()
-           } catch {
-               print("An error occurred setting up Amplify: \(error)")
-           }
         
-        var swiftUIView = FaceClass()
+        await fetchCurrentAuthSession(controller: controller)
         
 
-        swiftUIView.sessoinIdValue = "2378462378"
-      //  print(sessionIdValue)
-      //  swiftUIView.results = results
-    let hostingController = UIHostingController(rootView: swiftUIView)
+//        var swiftUIView = FaceClass()
+//        swiftUIView.sessoinIdValue = "2378462378"
+//        let hostingController = UIHostingController(rootView: swiftUIView)
+//        hostingController.modalPresentationStyle = .fullScreen
+//        controller.present(hostingController, animated: true)
 
-        hostingController.modalPresentationStyle = .fullScreen
-        controller.present(hostingController, animated: true)
-//        self.present(hostingController, animated: true) {
-//          
-//        }
-       
-
-        
-      
-        
     }
+    
+   private static func fetchCurrentAuthSession( controller: UIViewController) async {
+        do {
+            let session = try await Amplify.Auth.fetchAuthSession()
+            print("Is user signed in - \(session.isSignedIn)")
+            
+            print(session)
+            if(session.isSignedIn == true) {
+                faceLivenessApi(controller: controller)
+            }
+            else {
+                await signIn(controller: controller)
+            }
+            
+        } catch let error as AuthError {
+            print("Fetch session failed with error \(error)")
+        } catch {
+            print("Unexpected error: \(error)")
+        }
+    }
+    
+    
+   private static func faceLivenessApi(controller: UIViewController) {
+//        guard let apiURL = URL(string: "https://ipassplus.csdevhub.com/api/v1/aws/create/session") else { return }
+       var swiftUIView = FaceClass()
+       swiftUIView.sessoinIdValue = "2378462378"
+       let hostingController = UIHostingController(rootView: swiftUIView)
+       hostingController.modalPresentationStyle = .fullScreen
+       controller.present(hostingController, animated: true)
+    }
+    
+    
+    
+    
+    private static func signIn(controller: UIViewController) async {
+            do {
+                let signInResult = try await Amplify.Auth.signIn(
+                    username: "testuser",
+                    password: "Apple@123"
+                    )
+                if signInResult.isSignedIn {
+                    print("Sign in succeeded")
+                    await fetchCurrentAuthSession(controller: controller)
+                }
+            } catch let error as AuthError {
+                print("Sign in failed \(error)")
+            } catch {
+                print("Unexpected error: \(error)")
+            }
+        }
+        
+    
+
+    
     
     private func randomStringGenerator(length: Int) -> String {
         let letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"

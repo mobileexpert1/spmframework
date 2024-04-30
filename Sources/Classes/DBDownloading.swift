@@ -7,10 +7,20 @@
 
 import Foundation
 import DocumentReader
+import Amplify
+import AWSCognitoAuthPlugin
 //import Amplify
 public class DataBaseDownloading{
 
     public static func initialization(completion: @escaping (String, String, String) -> Void) {
+        
+        do {
+            Amplify.Logging.logLevel = .verbose
+            try Amplify.add(plugin: AWSCognitoAuthPlugin())
+               try Amplify.configure()
+           } catch {
+               print("An error occurred setting up Amplify: \(error)")
+           }
         DocumentReaderService.shared.initializeDatabaseAndAPI(progress: { state in
             var progressValue = ""
             var status = ""
