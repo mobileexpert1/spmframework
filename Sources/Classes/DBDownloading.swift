@@ -9,7 +9,7 @@ import AWSCognitoAuthPlugin
 
 public class DataBaseDownloading{
     
-    public static func initialization(completion: @escaping (Bool, String, String, String) -> Void) {
+    public static func initialization(completion: @escaping (Bool, String, Bool, String) -> Void) {
         var amplifyStatus = false
         do {
             Amplify.Logging.logLevel = .verbose
@@ -22,17 +22,18 @@ public class DataBaseDownloading{
         }
         DocumentReaderService.shared.initializeDatabaseAndAPI(progress: { state in
             var progressValue = ""
-            var status = ""
+            var status = false
             var validationError = ""
             switch state {
             case .downloadingDatabase(progress: let progress):
                 let progressString = String(format: "%.1f", progress * 100)
                 progressValue = "Downloading database: \(progressString)%"
             case .initializingAPI:
-                status = "Start Now"
+                status = true
             case .completed:
                 break
             case .error(let text):
+                status = false
                 validationError = text
                 print(text)
             }
