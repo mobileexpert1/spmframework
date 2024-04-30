@@ -86,11 +86,7 @@ public class iPassSDK {
                                     //                                    }
                                     //
                                     //                                })
-                                    Task { @MainActor in
-                                        
-                                        
-                                        await startCamera(controller: controller)
-                                    }
+                                  
                                 case .cancel:
                                     guard docResults != nil else {
                                         return
@@ -102,11 +98,7 @@ public class iPassSDK {
                                     //                                        completion(nil, error)
                                     //                                    }
                                     //                                })
-                                    Task { @MainActor in
-                                        
-                                        
-                                        await startCamera(controller: controller)
-                                    }
+                                  
                                 case .error:
                                     print("Error")
                                     completion(nil, error)
@@ -114,11 +106,7 @@ public class iPassSDK {
                                     break
                                 }
                             })
-                            Task { @MainActor in
-                                
-                                
-                                await startCamera(controller: controller)
-                            }
+                           
                         } else {
                             getDocImages(isForCustom : false, userEmail:userEmail, datavalue: docResults ?? DocumentReaderResults(), userToken: userToken, appToken: appToken, completion: {(resuldata, error)in
                                 if let result = resuldata{
@@ -400,7 +388,7 @@ public class iPassSDK {
        
        DispatchQueue.main.async {
            var swiftUIView = FaceClass()
-           swiftUIView.sessoinIdValue = "1d4bb6cc-91c8-4029-92c3-facea9af7d45"
+           swiftUIView.sessoinIdValue =  UserLocalStore.shared.sessionId
            let hostingController = UIHostingController(rootView: swiftUIView)
            hostingController.modalPresentationStyle = .fullScreen
            controller.present(hostingController, animated: true)
