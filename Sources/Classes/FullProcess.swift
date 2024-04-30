@@ -281,11 +281,15 @@ public class iPassSDK {
     
    private static func faceLivenessApi(controller: UIViewController) {
 //        guard let apiURL = URL(string: "https://ipassplus.csdevhub.com/api/v1/aws/create/session") else { return }
-       var swiftUIView = FaceClass()
-       swiftUIView.sessoinIdValue = "2378462378"
-       let hostingController = UIHostingController(rootView: swiftUIView)
-       hostingController.modalPresentationStyle = .fullScreen
-       controller.present(hostingController, animated: true)
+       
+       DispatchQueue.main.async {
+           var swiftUIView = FaceClass()
+           swiftUIView.sessoinIdValue = "2378462378"
+           let hostingController = UIHostingController(rootView: swiftUIView)
+           hostingController.modalPresentationStyle = .fullScreen
+           controller.present(hostingController, animated: true)
+       }
+      
     }
     
     
