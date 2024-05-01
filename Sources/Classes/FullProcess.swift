@@ -269,17 +269,20 @@ public class iPassSDK {
                                             guard results != nil else {
                                                 return
                                             }
-                                        
-                                            iPassSDKDataObjHandler.shared.resultScanData = results!
-                                            Task { @MainActor in
-                                                await startCamera()
+                                            DispatchQueue.main.async {
+                                                iPassSDKDataObjHandler.shared.resultScanData = results!
+                                                Task { @MainActor in
+                                                    await startCamera()
+                                                }
                                             }
                                         case .cancel:
                                             guard docResults != nil else {
                                                 return
                                             }
-                                            Task { @MainActor in
-                                                await startCamera()
+                                            DispatchQueue.main.async {
+                                                Task { @MainActor in
+                                                    await startCamera()
+                                                }
                                             }
                                         case .error:
                                             print("Error")
@@ -288,8 +291,10 @@ public class iPassSDK {
                                             break
                                         }
                                     })
-                                    Task { @MainActor in
-                                        await startCamera()
+                                    DispatchQueue.main.async {
+                                        Task { @MainActor in
+                                            await startCamera()
+                                        }
                                     }
                                 } else {
                                     getDocImages(isForCustom : false, userEmail:userEmail, datavalue: docResults ?? DocumentReaderResults(), userToken: userToken, appToken: appToken, completion: {(resuldata, error)in
@@ -299,8 +304,10 @@ public class iPassSDK {
                                             completion(nil, error)
                                         }
                                     })
-                                    Task { @MainActor in
-                                        await startCamera()
+                                    DispatchQueue.main.async {
+                                        Task { @MainActor in
+                                            await startCamera()
+                                        }
                                     }
                                 }
                                 
