@@ -7,8 +7,50 @@
 
 import Foundation
 import SwiftUI
+import Amplify
+import FaceLiveness
+import AWSPluginsCore
 
 public class iPassHandler {
+    
+    
+    public static  func confirmSignUp(for username: String, with confirmationCode: String) async {
+        do {
+            let confirmSignUpResult = try await Amplify.Auth.confirmSignUp(
+                for: username,
+                confirmationCode: confirmationCode
+            )
+            print("Confirm sign up result completed: \(confirmSignUpResult.isSignUpComplete)")
+        } catch let error as AuthError {
+            print("An error occurred while confirming sign up \(error)")
+        } catch {
+            print("Unexpected error: \(error)")
+        }
+    }
+    
+    
+    public static  func signUp(username: String, password: String, email: String) async {
+        let userAttributes = [AuthUserAttribute(.email, value: email)]
+        let options = AuthSignUpRequest.Options(userAttributes: userAttributes)
+        do {
+            let signUpResult = try await Amplify.Auth.signUp(
+                username: username,
+                password: password,
+                options: options
+            )
+            if case let .confirmUser(deliveryDetails, _, userId) = signUpResult.nextStep {
+                print("Delivery details \(String(describing: deliveryDetails)) for userId: \(String(describing: userId))")
+            } else {
+                print("SignUp Complete")
+            }
+        } catch let error as AuthError {
+            print("An error occurred while registering a user \(error)")
+        } catch {
+            print("Unexpected error: \(error)")
+        }
+    }
+    
+    
     
     public static func LoginAuthAPi(email: String, password: String, completion: @escaping (Bool?, String?) -> Void){
         guard let apiURL = URL(string: "https://plusapi.ipass-mena.com/api/v1/ipass/create/authenticate/login") else { return }
