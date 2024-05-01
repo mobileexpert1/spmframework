@@ -7,35 +7,33 @@
     "CredentialsProvider": {
         "CognitoIdentity": {
             "Default": {
-                "PoolId": "us-east-1:f904345d-86fd-40a6-8edd-9b954e01c603",
+                "PoolId": "us-east-1:455f26d7-c7d0-492c-803f-e653cc1b20c4",
                 "Region": "us-east-1"
             }
         }
     },
     "CognitoUserPool": {
         "Default": {
-            "PoolId": "us-east-1_NB8hAq4H4",
-            "AppClientId": "47qcne2njqhrq84kebb04iar5q",
+            "PoolId": "us-east-1_AFs8Y3FPi",
+            "AppClientId": "6sonp65aevvh7ib2nqgi0flp7q",
             "Region": "us-east-1"
         }
     },
     "Auth": {
         "Default": {
             "authenticationFlowType": "USER_SRP_AUTH",
-            "mfaConfiguration": "OFF",
-            "mfaTypes": [
-                "SMS"
+            "socialProviders": [],
+            "usernameAttributes": [],
+            "signupAttributes": [
+                "EMAIL"
             ],
             "passwordProtectionSettings": {
                 "passwordPolicyMinLength": 8,
                 "passwordPolicyCharacters": []
             },
-            "signupAttributes": [
-                "EMAIL"
-            ],
-            "socialProviders": [],
-            "usernameAttributes": [
-                "EMAIL"
+            "mfaConfiguration": "OFF",
+            "mfaTypes": [
+                "SMS"
             ],
             "verificationMechanisms": [
                 "EMAIL"
