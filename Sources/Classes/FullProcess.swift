@@ -28,7 +28,8 @@ public class iPassSDK {
     public static func fullProcessScanning(needLiveness : Bool? = true, userEmail:String, type: Int, controller: UIViewController, userToken:String, appToken:String, completion: @escaping (String?, Error?) -> Void) async {
 
         DispatchQueue.main.async {
-            
+            let randomNo = generateRandomTwoDigitNumber()
+            print("random----->",  randomNo)
             
             if needLiveness == true {
                 /*
@@ -327,6 +328,7 @@ public class iPassSDK {
         return randomValue + randStr
     }
     
+    
     private static func getDocImages(isForCustom : Bool, userEmail:String, datavalue: DocumentReaderResults, userToken:String, appToken:String, completion: @escaping (String?, Error?) -> Void) {
         
      
@@ -346,15 +348,16 @@ public class iPassSDK {
        
         
         
-//        let randomNo = generateRandomTwoDigitNumber()
-//        
-//        saveDataPostApi(isForCustom : isForCustom, userEmail:userEmail, random: randomNo, results: datavalue, userToken: userToken, appToken: appToken, completion: { (result, error) in
-//            if let result = result {
-//                completion(result, nil)
-//            } else {
-//                completion(nil, error)
-//            }
-//        })
+        let randomNo = generateRandomTwoDigitNumber()
+        print("random----->",  randomNo)
+        
+        saveDataPostApi(isForCustom : isForCustom, userEmail:userEmail, random: randomNo, results: datavalue, userToken: userToken, appToken: appToken, completion: { (result, error) in
+            if let result = result {
+                completion(result, nil)
+            } else {
+                completion(nil, error)
+            }
+        })
         
     }
     
@@ -374,24 +377,7 @@ public class iPassSDK {
         print(" UserLocalStore.shared.sessionId----" , UserLocalStore.shared.sessionId)
         print("UserLocalStore.shared.token----" , UserLocalStore.shared.token)
         
-        iPassHandler.fetchDataliveness(token:  UserLocalStore.shared.token, sessId:  UserLocalStore.shared.sessionId) { (data, error) in
-            if let error = error {
-                print("Error: \(error)")
-                return
-            }
-            
-            if let data = data {
-                if let dataString = String(data: data, encoding: .utf8) {
-                    print("getDataFromAPI completed")
-                    print("dataString------>", dataString)
-                  //  completion(dataString, nil)
-                    
-                } else {
-                    print("Error converting data to string.")
-                }
-            }
-            
-        }
+      
     }
     
    private static func fetchCurrentAuthSession( controller: UIViewController) async {
