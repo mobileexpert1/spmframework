@@ -452,8 +452,8 @@ public class iPassSDK {
     private static func signIn(controller: UIViewController) async {
             do {
                 let signInResult = try await Amplify.Auth.signIn(
-                    username: "testuser",
-                    password: "Apple@123"
+                    username: "test123@yopmail.com",
+                    password: "123456789"
                     )
                 if signInResult.isSignedIn {
                     print("Sign in succeeded")
