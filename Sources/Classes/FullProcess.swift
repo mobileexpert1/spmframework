@@ -547,15 +547,20 @@ public class iPassSDK {
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         
+        let documentDataJson = convertStringToJSON(iPassSDKDataObjHandler.shared.resultScanData.rawResult)
+            
+        
+        let livenessDataJson = convertStringToJSON(iPassSDKDataObjHandler.shared.livenessResultData)
+        
         let parameters: [String: Any] = [
             "email": iPassSDKDataObjHandler.shared.email,
-            "idvData": convertStringToJSON(iPassSDKDataObjHandler.shared.resultScanData.rawResult) ?? "",
-            "livenessdata": convertStringToJSON(iPassSDKDataObjHandler.shared.livenessResultData) ?? "",
+            "idvData": documentDataJson ?? "",
+            "livenessdata": livenessDataJson ?? "",
             "randomid": iPassSDKDataObjHandler.shared.sid,
             "userToken" : iPassSDKDataObjHandler.shared.authToken,
             "appToken" : iPassSDKDataObjHandler.shared.token
         ]
-        
+        print(parameters)
         do {
             request.httpBody = try JSONSerialization.data(withJSONObject: parameters, options: .prettyPrinted)
         } catch let error {
