@@ -247,7 +247,7 @@ public class iPassHandler {
     
     public static func getresultliveness(token: String, sessionId: String, sid: String, email: String, auth_token: String, completion: @escaping (Data?, Error?) -> Void) {
             
-        if var urlComponents = URLComponents(string: "https://plusapi.ipass-mena.com/api/v1/ipass/plus/session/result") {
+        if var urlComponents = URLComponents(string: "https://plusapi.ipass-mena.com/api/v1/ipass/plus/session/result/") {
             urlComponents.queryItems = [ //
                 
                 URLQueryItem(name: "sessionId", value: sessionId),
