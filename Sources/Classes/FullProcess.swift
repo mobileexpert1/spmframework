@@ -23,16 +23,18 @@ public class iPassSDK {
     private var delegate:ScanningResultData?
     public var resultData:DocumentReaderResults?
     
-    private  static var resultScanData:DocumentReaderResults?
-    private static var userTokens : String?
-    private static var appTokens : String?
-    private static var userEmails : String?
+    private static var resultScanData:DocumentReaderResults?
+    private static var authToken = String()
+    private static var token = String()
+    private static var email = String()
+    private static var sid = String()
+    private static var faceLivenessValue = String()
     
     
     
-    public static func testFu() {
-        iPassHandler.createSessionApi(email: "ipassmobile@yopmail.com", auth_token: UserLocalStore.shared.token)
-    }
+//    public static func testFu() {
+//        iPassHandler.createSessionApi(email: "ipassmobile@yopmail.com", auth_token: UserLocalStore.shared.token)
+//    }
     
     public static func testAWS(controller: UIViewController) async {
         
@@ -48,17 +50,18 @@ public class iPassSDK {
     }
     
     public static func fullProcessScanning(needLiveness : Bool? = true, userEmail:String, type: Int, controller: UIViewController, userToken:String, appToken:String, completion: @escaping (String?, Error?) -> Void) async {
+        print("needLiveness--->", needLiveness)
         print("userToken--->", userToken)
         print("appToken--->", appToken)
         print("userEmail---->", userEmail)
-        userTokens = userToken
-        appTokens = appToken
-        userEmails = userEmail
+        authToken = userToken
+        token = appToken
+        email = userEmail
         
         DispatchQueue.main.async {
             let randomNo = generateRandomTwoDigitNumber()
             print("random----->",  randomNo)
-            
+            sid = randomNo
             if needLiveness == true {
                 /*
                  session id api
@@ -69,104 +72,77 @@ public class iPassSDK {
                  get data
                  get liveness data
                  */
-                iPassHandler.createSessionApi(email: userEmail, auth_token: UserLocalStore.shared.token)
-                
-                DocReader.shared.processParams.multipageProcessing = true
-                DocReader.shared.processParams.authenticityParams?.livenessParams?.checkHolo = false
-                DocReader.shared.processParams.authenticityParams?.livenessParams?.checkOVI = false
-                DocReader.shared.processParams.authenticityParams?.livenessParams?.checkMLI = false
-                
-                let config = DocReader.ScannerConfig(scenario: "")
-                switch type {
-                case 0:
-                    config.scenario = RGL_SCENARIO_FULL_AUTH
-                case 1:
-                    config.scenario = RGL_SCENARIO_CREDIT_CARD
-                case 2:
-                    config.scenario = RGL_SCENARIO_MRZ
-                case 3:
-                    config.scenario = RGL_SCENARIO_BARCODE
-                default:
-                    config.scenario = RGL_SCENARIO_FULL_AUTH
-                }
-                
-                DocReader.shared.showScanner(presenter: controller, config: config) { [self] (action, docResults, error) in
-                    if action == .complete || action == .processTimeout {
-                        if docResults?.chipPage != 0  {
-                            DocReader.shared.startRFIDReader(fromPresenter: controller, completion: {  []  (action, results, error) in
-                                switch action {
-                                case .complete:
-                                    guard results != nil else {
-                                        return
-                                    }
-                                    resultScanData = results
-                                    
-                                    Task { @MainActor in
-                                        
-                                        
-                                        await startCamera(controller: controller)
-                                    }
-                                    
-                                    //                                getDocImages(isForCustom : false, userEmail:userEmail, datavalue: docResults ?? DocumentReaderResults(), userToken: userToken, appToken: appToken, completion: {(resuldata, error)in
-                                    //                                    if let result = resuldata{
-                                    //                                        completion(result, nil)
-                                    //                                    }else{
-                                    //                                        completion(nil, error)
-                                    //                                    }
-                                    //
-                                    //                                })
-                                    Task { @MainActor in
-                                        
-                                        
-                                        await startCamera(controller: controller)
-                                    }
-                                case .cancel:
-                                    guard docResults != nil else {
-                                        return
-                                    }
-                                    //                                getDocImages(isForCustom : false, userEmail:userEmail, datavalue: docResults ?? DocumentReaderResults(), userToken: userToken, appToken: appToken, completion: {(resuldata, error)in
-                                    //                                    if let result = resuldata{
-                                    //                                        completion(result, nil)
-                                    //                                    }else{
-                                    //                                        completion(nil, error)
-                                    //                                    }
-                                    //                                })
-                                    Task { @MainActor in
-                                        
-                                        
-                                        await startCamera(controller: controller)
-                                    }
-                                case .error:
-                                    print("Error")
-                                    completion(nil, error)
-                                default:
-                                    break
-                                }
-                            })
-                            Task { @MainActor in
-                                
-                                
-                                await startCamera(controller: controller)
-                            }
-                        } else {
-                            getDocImages(isForCustom : false, userEmail:userEmail, datavalue: docResults ?? DocumentReaderResults(), userToken: userToken, appToken: appToken, completion: {(resuldata, error)in
-                                if let result = resuldata{
-                                    completion(result, nil)
-                                }else{
-                                    completion(nil, error)
-                                }
-                            })
-                            Task { @MainActor in
-                                
-                                
-                                await startCamera(controller: controller)
-                            }
-                            
+//                iPassHandler.createSessionApi(email: userEmail, auth_token: UserLocalStore.shared.token)
+                iPassHandler.createSessionApi(email: self.email, auth_token: authToken, token: self.token) { status in
+                    if status == true {
+                        DocReader.shared.processParams.multipageProcessing = true
+                        DocReader.shared.processParams.authenticityParams?.livenessParams?.checkHolo = false
+                        DocReader.shared.processParams.authenticityParams?.livenessParams?.checkOVI = false
+                        DocReader.shared.processParams.authenticityParams?.livenessParams?.checkMLI = false
+                        
+                        let config = DocReader.ScannerConfig(scenario: "")
+                        switch type {
+                        case 0:
+                            config.scenario = RGL_SCENARIO_FULL_AUTH
+                        case 1:
+                            config.scenario = RGL_SCENARIO_CREDIT_CARD
+                        case 2:
+                            config.scenario = RGL_SCENARIO_MRZ
+                        case 3:
+                            config.scenario = RGL_SCENARIO_BARCODE
+                        default:
+                            config.scenario = RGL_SCENARIO_FULL_AUTH
                         }
                         
-                    }
-                    else  if action == .cancel  {
-                        completion(nil, error)
+                        DocReader.shared.showScanner(presenter: controller, config: config) { [self] (action, docResults, error) in
+                            if action == .complete || action == .processTimeout {
+                                if docResults?.chipPage != 0  {
+                                    DocReader.shared.startRFIDReader(fromPresenter: controller, completion: {  []  (action, results, error) in
+                                        switch action {
+                                        case .complete:
+                                            guard results != nil else {
+                                                return
+                                            }
+                                            resultScanData = results
+                                            
+                                            Task { @MainActor in
+                                                await startCamera(controller: controller)
+                                            }
+                                        case .cancel:
+                                            guard docResults != nil else {
+                                                return
+                                            }
+                                            Task { @MainActor in
+                                                await startCamera(controller: controller)
+                                            }
+                                        case .error:
+                                            print("Error")
+                                            completion(nil, error)
+                                        default:
+                                            break
+                                        }
+                                    })
+                                    Task { @MainActor in
+                                        await startCamera(controller: controller)
+                                    }
+                                } else {
+                                    getDocImages(isForCustom : false, userEmail:userEmail, datavalue: docResults ?? DocumentReaderResults(), userToken: userToken, appToken: appToken, completion: {(resuldata, error)in
+                                        if let result = resuldata{
+                                            completion(result, nil)
+                                        }else{
+                                            completion(nil, error)
+                                        }
+                                    })
+                                    Task { @MainActor in
+                                        await startCamera(controller: controller)
+                                    }
+                                }
+                                
+                            }
+                            else  if action == .cancel  {
+                                completion(nil, error)
+                            }
+                        }
                     }
                 }
             } else {
@@ -439,30 +415,32 @@ public class iPassSDK {
            let hostingController = UIHostingController(rootView: swiftUIView)
            hostingController.modalPresentationStyle = .fullScreen
            controller.present(hostingController, animated: true)
+           
+           NotificationCenter.default.addObserver(forName: NSNotification.Name("dismissSwiftUI"), object: nil, queue: nil) { (data) in
+               print("userInfo-->> ",data.userInfo)
+               hostingController.dismiss(animated: true, completion: nil)
+           }
        }
       
-       let randomNo = generateRandomTwoDigitNumber()
-       print("random----->",  randomNo)
-       
-       iPassHandler.getresultliveness(token: appTokens ?? "", sessionId: UserLocalStore.shared.sessionId, sid: randomNo, email: userEmails ?? "", auth_token:  UserLocalStore.shared.token)  { (data, error) in
-           if let error = error {
-               print("Error: \(error)")
-               return
-           }
-           
-           if let data = data {
-               if let dataString = String(data: data, encoding: .utf8) {
-                   print("getresultliveness completed")
-                   print("getresultlivenessdataString--->",  dataString)
-                  // completion(dataString, nil)
-                   
-               } else {
-                   print("Error converting data to string.")
-               }
-           }
-           
-       }
-       
+//       iPassHandler.getresultliveness(token: appTokens ?? "", sessionId: UserLocalStore.shared.sessionId, sid: randomNo, email: userEmails ?? "", auth_token:  UserLocalStore.shared.token)  { (data, error) in
+//           if let error = error {
+//               print("Error: \(error)")
+//               return
+//           }
+//           
+//           if let data = data {
+//               if let dataString = String(data: data, encoding: .utf8) {
+//                   print("getresultliveness completed")
+//                   print("getresultlivenessdataString--->",  dataString)
+//                  // completion(dataString, nil)
+//                   
+//               } else {
+//                   print("Error converting data to string.")
+//               }
+//           }
+//           
+//       }
+//       
        
     }
     

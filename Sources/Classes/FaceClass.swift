@@ -47,6 +47,10 @@ public struct FaceClass: View {
                         self.faceLivenessStringValue = "1" // Now you can modify this
                         UserDefaults.standard.set(faceLivenessStringValue, forKey: "faceLiveness")
                         self.isPresentingUserInfo = true
+                        var dictStatus = [AnyHashable:Any]()
+                        dictStatus["value"] = "1"
+                        dictStatus["status"] = "success"
+                        NotificationCenter.default.post(name: NSNotification.Name("dismissSwiftUI"), object: nil, userInfo: dictStatus)
                     }
                 case .failure(_):
                     print("Failure")
@@ -54,11 +58,12 @@ public struct FaceClass: View {
                         self.faceLivenessStringValue = "0" // Now you can modify this
                         UserDefaults.standard.set(faceLivenessStringValue, forKey: "isFaceLiveness")
                         self.isPresentingUserInfo = true
+                        var dictStatus = [AnyHashable:Any]()
+                        dictStatus["value"] = "0"
+                        dictStatus["status"] = "failure"
+                        NotificationCenter.default.post(name: NSNotification.Name("dismissSwiftUI"), object: nil, userInfo: dictStatus)
                     }
-                default:
-                    print("Default case")
                 }
-            
             }
         )
         .sheet(isPresented: $isPresentingUserInfo) {

@@ -109,36 +109,38 @@ public class iPassHandler {
     }
 
 
-    public static func createSessionApi(email:String,auth_token:String){
-        guard let apiURL = URL(string: "https://plusapi.ipass-mena.com/api/v1/ipass/plus/face/session/create?token=eyJhbGciOiJIUzI1NiJ9.eW9wbWFpbDEyM0BnbWFpbC5jb21hZnNkIHNkZmEgICA2ODlmMDJhYy1iZGMwLTQ1YzAtOWVlNC04NDRmOGMzMGQ0YzU.LiGjDJwSjOAMBU-ssBA0DbYPlz_sPLexErz70hGCP6A") else { return }
+    public static func createSessionApi(email:String,auth_token:String,token:String, completion : @escaping (Bool) -> ()){
+        
+        guard let apiURL = URL(string: "https://plusapi.ipass-mena.com/api/v1/ipass/plus/face/session/create?token=\(token)") else { return }
         
         var request = URLRequest(url: apiURL)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        let dict:[String:Any] = [:]
+        
         let parameters: [String: Any] = [
             "email": email,
             "auth_token": auth_token
         ]
-
-        print("url-> ", apiURL)
+        
+        print("create session api url -->> ", apiURL)
         print("parameters-> ", parameters)
+        
         do {
             request.httpBody = try JSONSerialization.data(withJSONObject: parameters, options: .prettyPrinted)
         } catch let error {
             print("Error serializing parameters: \(error.localizedDescription)")
             return
         }
-
+        
         let task = URLSession.shared.dataTask(with: request) { data, response, error in
             guard let data = data, let response = response as? HTTPURLResponse, error == nil else {
                 print("Error: \(error?.localizedDescription ?? "Unknown error")")
                 return
             }
-
+            
             let status = response.statusCode
             print("Response status code: \(status)")
-
+            
             if status == 200 {
                 do {
                     if let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
@@ -147,21 +149,23 @@ public class iPassHandler {
                         if let sessionId = json["sessionId"] as? String {
                             UserLocalStore.shared.sessionId = sessionId
                             print("sessionId ------>> ",sessionId)
+                            completion(true)
                         }
-                        
-                       // presentSwiftUIView()
-                        
+                        // presentSwiftUIView()
                     } else {
                         print("Failed to parse JSON response")
+                        completion(false)
                     }
                 } catch let error {
                     print("Error parsing JSON response: \(error.localizedDescription)")
+                    completion(false)
                 }
             } else {
                 print("Unexpected status code: \(status)")
+                completion(false)
             }
         }
-
+        
         task.resume()
     }
     
@@ -244,7 +248,7 @@ public class iPassHandler {
     public static func getresultliveness(token: String, sessionId: String, sid: String, email: String, auth_token: String, completion: @escaping (Data?, Error?) -> Void) {
                                                      
         if var urlComponents = URLComponents(string: "https://plusapi.ipass-mena.com/api/v1/ipass/plus/session/result") {
-            urlComponents.queryItems = [
+            urlComponents.queryItems = [ //
                 
                 URLQueryItem(name: "sessionId", value: sessionId),
                 URLQueryItem(name: "sid", value: sid),
