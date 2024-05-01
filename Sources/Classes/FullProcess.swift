@@ -415,31 +415,29 @@ public class iPassSDK {
            controller.present(hostingController, animated: true)
            
            NotificationCenter.default.addObserver(forName: NSNotification.Name("dismissSwiftUI"), object: nil, queue: nil) { (data) in
-               print("userInfo-->> ",data.userInfo)
+               print("userInfo from swift ui class-->> ",data.userInfo?["status"] ?? "no status value")
                hostingController.dismiss(animated: true, completion: nil)
+               
+               iPassHandler.getresultliveness(token: self.token, sessionId: UserLocalStore.shared.sessionId, sid: self.sid, email: self.email, auth_token:  UserLocalStore.shared.token)  { (data, error) in
+                   if let error = error {
+                       print("Error: \(error)")
+                       return
+                   }
+                   
+                   if let data = data {
+                       if let dataString = String(data: data, encoding: .utf8) {
+                           print("getresultliveness completed")
+                           print("getresultlivenessdataString--->",  dataString)
+                          // completion(dataString, nil)
+                           
+                       } else {
+                           print("Error converting data to string.")
+                       }
+                   }
+                   
+               }
            }
        }
-      
-//       iPassHandler.getresultliveness(token: appTokens ?? "", sessionId: UserLocalStore.shared.sessionId, sid: randomNo, email: userEmails ?? "", auth_token:  UserLocalStore.shared.token)  { (data, error) in
-//           if let error = error {
-//               print("Error: \(error)")
-//               return
-//           }
-//           
-//           if let data = data {
-//               if let dataString = String(data: data, encoding: .utf8) {
-//                   print("getresultliveness completed")
-//                   print("getresultlivenessdataString--->",  dataString)
-//                  // completion(dataString, nil)
-//                   
-//               } else {
-//                   print("Error converting data to string.")
-//               }
-//           }
-//           
-//       }
-//       
-       
     }
     
     
