@@ -208,6 +208,7 @@ public class iPassSDK {
                             })
                             
                         }
+                        iPassSDKDataObjHandler.shared.resultScanData = DocumentReaderResults()
                         
                     }
                     else  if action == .cancel  {
