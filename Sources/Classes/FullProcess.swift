@@ -226,7 +226,7 @@ public class iPassSDK {
     }
     
     
-    public static func fullProcessScanning(needLiveness : Bool? = true, userEmail:String, type: Int, controller: UIViewController, userToken:String, appToken:String, completion: @escaping (String?, Error?) -> Void) async {
+    public static func fullProcessScanning(needLiveness : Bool? = true, userEmail:String, type: Int, controller: UIViewController, userToken:String, appToken:String) async {
         
         iPassSDKDataObjHandler.shared.authToken = userToken
         iPassSDKDataObjHandler.shared.token = appToken
@@ -294,24 +294,14 @@ public class iPassSDK {
                                             }
                                         case .error:
                                             print("Error")
-                                            completion(nil, error)
                                         default:
                                             break
                                         }
                                     })
-                                    DispatchQueue.main.async {
-                                        Task { @MainActor in
-                                            await startCamera()
-                                        }
-                                    }
-                                } else {
-//                                    getDocImages(isForCustom : false, userEmail:userEmail, datavalue: docResults ?? DocumentReaderResults(), userToken: userToken, appToken: appToken, completion: {(resuldata, error)in
-//                                        if let result = resuldata{
-//                                            completion(result, nil)
-//                                        }else{
-//                                            completion(nil, error)
-//                                        }
-//                                    })
+                                
+                                } 
+                                
+                                else {
                                     DispatchQueue.main.async {
                                         iPassSDKDataObjHandler.shared.resultScanData = docResults!
                                         Task { @MainActor in
@@ -322,19 +312,21 @@ public class iPassSDK {
                                 
                             }
                             else  if action == .cancel  {
-                                completion(nil, error)
                             }
                         }
                     }
                 }
             }
-        } else {
+        } 
+        
+        else {
             DispatchQueue.main.async {
+               
                 /*
-                 scanner
-                 save data api
-                 get data api
-                 */
+                                scanner
+                                save data api
+                                get data api
+                                */
                 
                 DocReader.shared.processParams.multipageProcessing = true
                 DocReader.shared.processParams.authenticityParams?.livenessParams?.checkHolo = false
@@ -358,51 +350,62 @@ public class iPassSDK {
                 DocReader.shared.showScanner(presenter: controller, config: config) { [self] (action, docResults, error) in
                     if action == .complete || action == .processTimeout {
                         if docResults?.chipPage != 0  {
-                            DocReader.shared.startRFIDReader(fromPresenter: controller, completion: { [] (action, results, error) in
+                            DocReader.shared.startRFIDReader(fromPresenter: controller, completion: {  []  (action, results, error) in
                                 switch action {
                                 case .complete:
                                     guard results != nil else {
                                         return
                                     }
-                                    getDocImages(isForCustom : false, userEmail:userEmail, datavalue: docResults ?? DocumentReaderResults(), userToken: userToken, appToken: appToken, completion: {(resuldata, error)in
-                                        if let result = resuldata{
-                                            completion(result, nil)
-                                        }else{
-                                            completion(nil, error)
+                                    DispatchQueue.main.async {
+                                        iPassSDKDataObjHandler.shared.resultScanData = results!
+                                        self.saveDataPostApi() { dataStr, _ in
+                                            print("-=-=-=-==--=----get data api response-=-=-=-==--=----")
+                                            print("-=-=-=-==--=----get data api response-=-=-=-==--=----")
+                                            print(dataStr)
+                                            print("-=-=-=-==--=----get data api response-=-=-=-==--=----")
+                                            print("-=-=-=-==--=----get data api response-=-=-=-==--=----")
+                                            self.delegate?.getScanCompletionResult(result: dataStr)
                                         }
-                                    })
+                                    }
                                 case .cancel:
                                     guard docResults != nil else {
                                         return
                                     }
-                                    getDocImages(isForCustom : false, userEmail:userEmail, datavalue: docResults ?? DocumentReaderResults(), userToken: userToken, appToken: appToken, completion: {(resuldata, error)in
-                                        if let result = resuldata{
-                                            completion(result, nil)
-                                        }else{
-                                            completion(nil, error)
+                                    DispatchQueue.main.async {
+                                        self.saveDataPostApi() { dataStr, _ in
+                                            print("-=-=-=-==--=----get data api response-=-=-=-==--=----")
+                                            print("-=-=-=-==--=----get data api response-=-=-=-==--=----")
+                                            print(dataStr)
+                                            print("-=-=-=-==--=----get data api response-=-=-=-==--=----")
+                                            print("-=-=-=-==--=----get data api response-=-=-=-==--=----")
+                                            self.delegate?.getScanCompletionResult(result: dataStr)
                                         }
-                                    })
+                                    }
                                 case .error:
                                     print("Error")
-                                    completion(nil, error)
                                 default:
                                     break
                                 }
                             })
-                        } else {
-                            getDocImages(isForCustom : false, userEmail:userEmail, datavalue: docResults ?? DocumentReaderResults(), userToken: userToken, appToken: appToken, completion: {(resuldata, error)in
-                                if let result = resuldata{
-                                    completion(result, nil)
-                                }else{
-                                    completion(nil, error)
+                        
+                        }
+                        
+                        else {
+                            DispatchQueue.main.async {
+                                iPassSDKDataObjHandler.shared.resultScanData = docResults!
+                                self.saveDataPostApi() { dataStr, _ in
+                                    print("-=-=-=-==--=----get data api response-=-=-=-==--=----")
+                                    print("-=-=-=-==--=----get data api response-=-=-=-==--=----")
+                                    print(dataStr)
+                                    print("-=-=-=-==--=----get data api response-=-=-=-==--=----")
+                                    print("-=-=-=-==--=----get data api response-=-=-=-==--=----")
+                                    self.delegate?.getScanCompletionResult(result: dataStr)
                                 }
-                            })
-                            
+                            }
                         }
                         
                     }
                     else  if action == .cancel  {
-                        completion(nil, error)
                     }
                 }
             }
