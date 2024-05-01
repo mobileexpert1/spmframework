@@ -12,15 +12,15 @@
                 "CredentialsProvider": {
                     "CognitoIdentity": {
                         "Default": {
-                            "PoolId": "us-east-1:5839fccf-b615-499b-a351-d248675a5988",
+                            "PoolId": "us-east-1:455f26d7-c7d0-492c-803f-e653cc1b20c4",
                             "Region": "us-east-1"
                         }
                     }
                 },
                 "CognitoUserPool": {
                     "Default": {
-                        "PoolId": "us-east-1_4x5d7mqUI",
-                        "AppClientId": "25d226msc4j9t8br3u6iq1ndb6",
+                        "PoolId": "us-east-1_AFs8Y3FPi",
+                        "AppClientId": "6sonp65aevvh7ib2nqgi0flp7q",
                         "Region": "us-east-1"
                     }
                 },
@@ -28,9 +28,7 @@
                     "Default": {
                         "authenticationFlowType": "USER_SRP_AUTH",
                         "socialProviders": [],
-                        "usernameAttributes": [
-                            "EMAIL"
-                        ],
+                        "usernameAttributes": [],
                         "signupAttributes": [
                             "EMAIL"
                         ],

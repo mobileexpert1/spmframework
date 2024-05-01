@@ -28,6 +28,16 @@ public class iPassSDK {
     private static var appTokens : String?
     private static var userEmails : String?
     
+    
+    
+    public static func testFu() {
+        iPassHandler.createSessionApi(email: "ipassmobile@yopmail.com", auth_token: UserLocalStore.shared.token)
+    }
+    
+    public static func testAWS(controller: UIViewController) async {
+        await startCamera(controller: controller)
+    }
+    
     public static func fullProcessScanning(needLiveness : Bool? = true, userEmail:String, type: Int, controller: UIViewController, userToken:String, appToken:String, completion: @escaping (String?, Error?) -> Void) async {
         print("userToken--->", userToken)
         print("appToken--->", appToken)
@@ -374,7 +384,9 @@ public class iPassSDK {
     
     public static func startCamera( controller: UIViewController) async {
         
-       
+        print(" UserLocalStore.shared.sessionId----" , UserLocalStore.shared.sessionId)
+        print("UserLocalStore.shared.token----" , UserLocalStore.shared.token)
+        
         await fetchCurrentAuthSession(controller: controller)
         
 
@@ -383,8 +395,7 @@ public class iPassSDK {
 //        let hostingController = UIHostingController(rootView: swiftUIView)
 //        hostingController.modalPresentationStyle = .fullScreen
 //        controller.present(hostingController, animated: true)
-        print(" UserLocalStore.shared.sessionId----" , UserLocalStore.shared.sessionId)
-        print("UserLocalStore.shared.token----" , UserLocalStore.shared.token)
+      
         
       
     }
@@ -415,7 +426,7 @@ public class iPassSDK {
        
        DispatchQueue.main.async {
            var swiftUIView = FaceClass()
-           swiftUIView.sessoinIdValue = "fc07cb29-6695-4b93-a098-e006563f2210" //UserLocalStore.shared.sessionId
+           swiftUIView.sessoinIdValue = UserLocalStore.shared.sessionId
            let hostingController = UIHostingController(rootView: swiftUIView)
            hostingController.modalPresentationStyle = .fullScreen
            controller.present(hostingController, animated: true)
@@ -452,8 +463,8 @@ public class iPassSDK {
     private static func signIn(controller: UIViewController) async {
             do {
                 let signInResult = try await Amplify.Auth.signIn(
-                    username: "test123@yopmail.com",
-                    password: "123456789"
+                    username: "testuser",
+                    password: "Apple@123"
                     )
                 if signInResult.isSignedIn {
                     print("Sign in succeeded")
