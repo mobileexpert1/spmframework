@@ -432,7 +432,8 @@ public class iPassSDK {
            
            if let data = data {
                if let dataString = String(data: data, encoding: .utf8) {
-                   print("getDataFromAPI completed")
+                   print("getresultliveness completed")
+                   print("getresultlivenessdataString--->",  dataString)
                   // completion(dataString, nil)
                    
                } else {
