@@ -36,18 +36,18 @@ public class iPassSDK {
 //        iPassHandler.createSessionApi(email: "ipassmobile@yopmail.com", auth_token: UserLocalStore.shared.token)
 //    }
     
-    public static func testAWS(controller: UIViewController) async {
-        
-//        DispatchQueue.main.async {
-//            var swiftUIView = FaceClass()
-//            swiftUIView.sessoinIdValue = UserLocalStore.shared.sessionId
-//            let hostingController = UIHostingController(rootView: swiftUIView)
-//            hostingController.modalPresentationStyle = .fullScreen
-//            controller.present(hostingController, animated: true)
-//        }
-       
-        await startCamera(controller: controller)
-    }
+//    public static func testAWS(controller: UIViewController) async {
+//        
+////        DispatchQueue.main.async {
+////            var swiftUIView = FaceClass()
+////            swiftUIView.sessoinIdValue = UserLocalStore.shared.sessionId
+////            let hostingController = UIHostingController(rootView: swiftUIView)
+////            hostingController.modalPresentationStyle = .fullScreen
+////            controller.present(hostingController, animated: true)
+////        }
+//       
+//        await startCamera(controller: controller)
+//    }
     
     public static func fullProcessScanning(needLiveness : Bool? = true, userEmail:String, type: Int, controller: UIViewController, userToken:String, appToken:String, completion: @escaping (String?, Error?) -> Void) async {
         print("needLiveness--->", needLiveness)
@@ -58,23 +58,23 @@ public class iPassSDK {
         token = appToken
         email = userEmail
         
-        DispatchQueue.main.async {
-            let randomNo = generateRandomTwoDigitNumber()
-            print("random----->",  randomNo)
-            sid = randomNo
-            if needLiveness == true {
-                /*
-                 session id api
-                 scanner
-                 aws
-                 get liveness api
-                 save data api
-                 get data
-                 get liveness data
-                 */
-//                iPassHandler.createSessionApi(email: userEmail, auth_token: UserLocalStore.shared.token)
-                iPassHandler.createSessionApi(email: self.email, auth_token: authToken, token: self.token) { status in
-                    if status == true {
+        let randomNo = generateRandomTwoDigitNumber()
+        print("random----->",  randomNo)
+        sid = randomNo
+        if needLiveness == true {
+            /*
+             session id api
+             scanner
+             aws
+             get liveness api
+             save data api
+             get data
+             get liveness data
+             */
+            //                iPassHandler.createSessionApi(email: userEmail, auth_token: UserLocalStore.shared.token)
+            iPassHandler.createSessionApi(email: self.email, auth_token: authToken, token: self.token) { status in
+                if status == true {
+                    DispatchQueue.main.async {
                         DocReader.shared.processParams.multipageProcessing = true
                         DocReader.shared.processParams.authenticityParams?.livenessParams?.checkHolo = false
                         DocReader.shared.processParams.authenticityParams?.livenessParams?.checkOVI = false
@@ -145,7 +145,9 @@ public class iPassSDK {
                         }
                     }
                 }
-            } else {
+            }
+        } else {
+            DispatchQueue.main.async {
                 /*
                  scanner
                  save data api
@@ -222,11 +224,7 @@ public class iPassSDK {
                     }
                 }
             }
-            
-            
-            
         }
-        
     }
     
     
