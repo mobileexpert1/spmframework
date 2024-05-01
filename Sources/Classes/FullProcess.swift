@@ -298,15 +298,15 @@ public class iPassSDK {
                                         }
                                     }
                                 } else {
-                                    getDocImages(isForCustom : false, userEmail:userEmail, datavalue: docResults ?? DocumentReaderResults(), userToken: userToken, appToken: appToken, completion: {(resuldata, error)in
-                                        if let result = resuldata{
-                                            completion(result, nil)
-                                        }else{
-                                            completion(nil, error)
-                                        }
-                                    })
+//                                    getDocImages(isForCustom : false, userEmail:userEmail, datavalue: docResults ?? DocumentReaderResults(), userToken: userToken, appToken: appToken, completion: {(resuldata, error)in
+//                                        if let result = resuldata{
+//                                            completion(result, nil)
+//                                        }else{
+//                                            completion(nil, error)
+//                                        }
+//                                    })
                                     DispatchQueue.main.async {
-                                        iPassSDKDataObjHandler.shared.resultScanData = DocumentReaderResults()
+                                        iPassSDKDataObjHandler.shared.resultScanData = docResults!
                                         Task { @MainActor in
                                             await startCamera()
                                         }
