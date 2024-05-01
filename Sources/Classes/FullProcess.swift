@@ -14,53 +14,40 @@ import SwiftUI
 import Amplify
 import AWSCognitoAuthPlugin
 
+public class iPassSDKDataObjHandler {
+    public init() {}
+    
+    static let shared = iPassSDKDataObjHandler()
+    
+    var resultScanData = DocumentReaderResults()
+    var livenessResultData = String()
+    var authToken = String()
+    var token = String()
+    var email = String()
+    var sid = String()
+    var controller = UIViewController()
+    var sessionId = String()
+    var isCustom = Bool()
+}
 
 public class iPassSDK {
     public init() {}
     
     private var selectedScenario: String?
     private var sectionsData: [CustomizationSection] = []
-    private var delegate:ScanningResultData?
-    public var resultData:DocumentReaderResults?
-    
-    private static var resultScanData:DocumentReaderResults?
-    private static var authToken = String()
-    private static var token = String()
-    private static var email = String()
-    private static var sid = String()
-    private static var faceLivenessValue = String()
     
     
-    
-//    public static func testFu() {
-//        iPassHandler.createSessionApi(email: "ipassmobile@yopmail.com", auth_token: UserLocalStore.shared.token)
-//    }
-    
-//    public static func testAWS(controller: UIViewController) async {
-//        
-////        DispatchQueue.main.async {
-////            var swiftUIView = FaceClass()
-////            swiftUIView.sessoinIdValue = UserLocalStore.shared.sessionId
-////            let hostingController = UIHostingController(rootView: swiftUIView)
-////            hostingController.modalPresentationStyle = .fullScreen
-////            controller.present(hostingController, animated: true)
-////        }
-//       
-//        await startCamera(controller: controller)
-//    }
-    
-    public static func fullProcessScanning(needLiveness : Bool? = true, userEmail:String, type: Int, controller: UIViewController, userToken:String, appToken:String, completion: @escaping (String?, Error?) -> Void) async {
-        print("needLiveness--->", needLiveness)
-        print("userToken--->", userToken)
-        print("appToken--->", appToken)
-        print("userEmail---->", userEmail)
-        authToken = userToken
-        token = appToken
-        email = userEmail
+    public static func aToACustomScan(needLiveness : Bool? = true, userEmail:String, type: Int, controller: UIViewController, userToken:String, appToken:String, completion: @escaping (String?, Error?) -> Void) async {
         
-        let randomNo = generateRandomTwoDigitNumber()
-        print("random----->",  randomNo)
-        sid = randomNo
+        
+        iPassSDKDataObjHandler.shared.authToken = userToken
+        iPassSDKDataObjHandler.shared.token = appToken
+        iPassSDKDataObjHandler.shared.sid = generateRandomTwoDigitNumber()
+        iPassSDKDataObjHandler.shared.email = userEmail
+        iPassSDKDataObjHandler.shared.controller = controller
+        iPassSDKDataObjHandler.shared.isCustom = true
+       
+       
         if needLiveness == true {
             /*
              session id api
@@ -71,8 +58,7 @@ public class iPassSDK {
              get data
              get liveness data
              */
-            //                iPassHandler.createSessionApi(email: userEmail, auth_token: UserLocalStore.shared.token)
-            iPassHandler.createSessionApi(email: self.email, auth_token: authToken, token: self.token) { status in
+            iPassHandler.createSessionApi() { status in
                 if status == true {
                     DispatchQueue.main.async {
                         DocReader.shared.processParams.multipageProcessing = true
@@ -103,17 +89,16 @@ public class iPassSDK {
                                             guard results != nil else {
                                                 return
                                             }
-                                            resultScanData = results
-                                            
+                                            iPassSDKDataObjHandler.shared.resultScanData = results!
                                             Task { @MainActor in
-                                                await startCamera(controller: controller)
+                                                await startCamera()
                                             }
                                         case .cancel:
                                             guard docResults != nil else {
                                                 return
                                             }
                                             Task { @MainActor in
-                                                await startCamera(controller: controller)
+                                                await startCamera()
                                             }
                                         case .error:
                                             print("Error")
@@ -123,7 +108,7 @@ public class iPassSDK {
                                         }
                                     })
                                     Task { @MainActor in
-                                        await startCamera(controller: controller)
+                                        await startCamera()
                                     }
                                 } else {
                                     getDocImages(isForCustom : false, userEmail:userEmail, datavalue: docResults ?? DocumentReaderResults(), userToken: userToken, appToken: appToken, completion: {(resuldata, error)in
@@ -134,7 +119,7 @@ public class iPassSDK {
                                         }
                                     })
                                     Task { @MainActor in
-                                        await startCamera(controller: controller)
+                                        await startCamera()
                                     }
                                 }
                                 
@@ -227,93 +212,246 @@ public class iPassSDK {
         }
     }
     
-    
-    public static func CustomProcessScanning(userEmail:String, type: Int, controller: UIViewController, userToken:String, appToken:String, completion: @escaping (String?, Error?) -> Void) {
-        //        DocReader.shared.processParams.doublePageSpread = true
-        DocReader.shared.processParams.multipageProcessing = true
-        DocReader.shared.processParams.authenticityParams?.livenessParams?.checkHolo = false
-        DocReader.shared.processParams.authenticityParams?.livenessParams?.checkOVI = false
-        DocReader.shared.processParams.authenticityParams?.livenessParams?.checkMLI = false
+    public static func fullProcessScanning(needLiveness : Bool? = true, userEmail:String, type: Int, controller: UIViewController, userToken:String, appToken:String, completion: @escaping (String?, Error?) -> Void) async {
         
-        let config = DocReader.ScannerConfig(scenario: "")
         
-        switch type {
-        case 0:
-            config.scenario = RGL_SCENARIO_FULL_AUTH
-        case 1:
-            config.scenario = RGL_SCENARIO_CREDIT_CARD
-        case 2:
-            config.scenario = RGL_SCENARIO_MRZ
-        case 3:
-            config.scenario = RGL_SCENARIO_BARCODE
-        default:
-            config.scenario = RGL_SCENARIO_FULL_AUTH
-        }
-        DocReader.shared.showScanner(presenter: controller, config: config) { [self] (action, docResults, error) in
-            if action == .complete || action == .processTimeout {
-                //                 print(docResults?.rawResult as Any)
-                
-                
-                if docResults?.chipPage != 0  {
-                    //self.startRFIDReading(res)
-                    
-                    DocReader.shared.startRFIDReader(fromPresenter: controller, completion: { [] (action, results, error) in
-                        switch action {
-                        case .complete:
-                            guard let results = results else {
-                                return
-                            }
-                            //                                completion(results.rawResult, nil)
-                            getDocImages(isForCustom : true, userEmail:userEmail, datavalue: docResults ?? DocumentReaderResults(), userToken: userToken, appToken: appToken, completion: {(resuldata, error)in
-                                if let result = resuldata{
-                                    completion(result, nil)
-                                }else{
-                                    completion(nil, error)
-                                }
-                            })
-                        case .cancel:
-                            guard let results = docResults else {
-                                return
-                            }
-                            //                                completion(results.rawResult, nil)
-                            getDocImages(isForCustom : true, userEmail:userEmail, datavalue: docResults ?? DocumentReaderResults(), userToken: userToken, appToken: appToken, completion: {(resuldata, error)in
-                                if let result = resuldata{
-                                    completion(result, nil)
-                                }else{
-                                    completion(nil, error)
-                                }
-                            })
-                        case .error:
-                            print("Error")
-                            completion(nil, error)
+        iPassSDKDataObjHandler.shared.authToken = userToken
+        iPassSDKDataObjHandler.shared.token = appToken
+        iPassSDKDataObjHandler.shared.sid = generateRandomTwoDigitNumber()
+        iPassSDKDataObjHandler.shared.email = userEmail
+        iPassSDKDataObjHandler.shared.controller = controller
+        iPassSDKDataObjHandler.shared.isCustom = false
+       
+       
+        if needLiveness == true {
+            /*
+             session id api
+             scanner
+             aws
+             get liveness api
+             save data api
+             get data
+             get liveness data
+             */
+            iPassHandler.createSessionApi() { status in
+                if status == true {
+                    DispatchQueue.main.async {
+                        DocReader.shared.processParams.multipageProcessing = true
+                        DocReader.shared.processParams.authenticityParams?.livenessParams?.checkHolo = false
+                        DocReader.shared.processParams.authenticityParams?.livenessParams?.checkOVI = false
+                        DocReader.shared.processParams.authenticityParams?.livenessParams?.checkMLI = false
+                        
+                        let config = DocReader.ScannerConfig(scenario: "")
+                        switch type {
+                        case 0:
+                            config.scenario = RGL_SCENARIO_FULL_AUTH
+                        case 1:
+                            config.scenario = RGL_SCENARIO_CREDIT_CARD
+                        case 2:
+                            config.scenario = RGL_SCENARIO_MRZ
+                        case 3:
+                            config.scenario = RGL_SCENARIO_BARCODE
                         default:
-                            break
+                            config.scenario = RGL_SCENARIO_FULL_AUTH
                         }
-                    })
-                    
-                    
-                    
-                } else {
-                    //                        completion(docResults?.rawResult, nil)
-                    getDocImages(isForCustom : true, userEmail:userEmail, datavalue: docResults ?? DocumentReaderResults(), userToken: userToken, appToken: appToken, completion: {(resuldata, error)in
-                        if let result = resuldata{
-                            completion(result, nil)
-                        }else{
-                            completion(nil, error)
+                        
+                        DocReader.shared.showScanner(presenter: controller, config: config) { [self] (action, docResults, error) in
+                            if action == .complete || action == .processTimeout {
+                                if docResults?.chipPage != 0  {
+                                    DocReader.shared.startRFIDReader(fromPresenter: controller, completion: {  []  (action, results, error) in
+                                        switch action {
+                                        case .complete:
+                                            guard results != nil else {
+                                                return
+                                            }
+                                            iPassSDKDataObjHandler.shared.resultScanData = results!
+                                            Task { @MainActor in
+                                                await startCamera()
+                                            }
+                                        case .cancel:
+                                            guard docResults != nil else {
+                                                return
+                                            }
+                                            Task { @MainActor in
+                                                await startCamera()
+                                            }
+                                        case .error:
+                                            print("Error")
+                                            completion(nil, error)
+                                        default:
+                                            break
+                                        }
+                                    })
+                                    Task { @MainActor in
+                                        await startCamera()
+                                    }
+                                } else {
+                                    getDocImages(isForCustom : false, userEmail:userEmail, datavalue: docResults ?? DocumentReaderResults(), userToken: userToken, appToken: appToken, completion: {(resuldata, error)in
+                                        if let result = resuldata{
+                                            completion(result, nil)
+                                        }else{
+                                            completion(nil, error)
+                                        }
+                                    })
+                                    Task { @MainActor in
+                                        await startCamera()
+                                    }
+                                }
+                                
+                            }
+                            else  if action == .cancel  {
+                                completion(nil, error)
+                            }
                         }
-                    })
-                    
+                    }
+                }
+            }
+        } else {
+            DispatchQueue.main.async {
+                /*
+                 scanner
+                 save data api
+                 get data api
+                 */
+                
+                DocReader.shared.processParams.multipageProcessing = true
+                DocReader.shared.processParams.authenticityParams?.livenessParams?.checkHolo = false
+                DocReader.shared.processParams.authenticityParams?.livenessParams?.checkOVI = false
+                DocReader.shared.processParams.authenticityParams?.livenessParams?.checkMLI = false
+                
+                let config = DocReader.ScannerConfig(scenario: "")
+                switch type {
+                case 0:
+                    config.scenario = RGL_SCENARIO_FULL_AUTH
+                case 1:
+                    config.scenario = RGL_SCENARIO_CREDIT_CARD
+                case 2:
+                    config.scenario = RGL_SCENARIO_MRZ
+                case 3:
+                    config.scenario = RGL_SCENARIO_BARCODE
+                default:
+                    config.scenario = RGL_SCENARIO_FULL_AUTH
                 }
                 
-            }
-            else  if action == .cancel  {
-                completion(nil, error)
+                DocReader.shared.showScanner(presenter: controller, config: config) { [self] (action, docResults, error) in
+                    if action == .complete || action == .processTimeout {
+                        if docResults?.chipPage != 0  {
+                            DocReader.shared.startRFIDReader(fromPresenter: controller, completion: { [] (action, results, error) in
+                                switch action {
+                                case .complete:
+                                    guard results != nil else {
+                                        return
+                                    }
+                                    getDocImages(isForCustom : false, userEmail:userEmail, datavalue: docResults ?? DocumentReaderResults(), userToken: userToken, appToken: appToken, completion: {(resuldata, error)in
+                                        if let result = resuldata{
+                                            completion(result, nil)
+                                        }else{
+                                            completion(nil, error)
+                                        }
+                                    })
+                                case .cancel:
+                                    guard docResults != nil else {
+                                        return
+                                    }
+                                    getDocImages(isForCustom : false, userEmail:userEmail, datavalue: docResults ?? DocumentReaderResults(), userToken: userToken, appToken: appToken, completion: {(resuldata, error)in
+                                        if let result = resuldata{
+                                            completion(result, nil)
+                                        }else{
+                                            completion(nil, error)
+                                        }
+                                    })
+                                case .error:
+                                    print("Error")
+                                    completion(nil, error)
+                                default:
+                                    break
+                                }
+                            })
+                        } else {
+                            getDocImages(isForCustom : false, userEmail:userEmail, datavalue: docResults ?? DocumentReaderResults(), userToken: userToken, appToken: appToken, completion: {(resuldata, error)in
+                                if let result = resuldata{
+                                    completion(result, nil)
+                                }else{
+                                    completion(nil, error)
+                                }
+                            })
+                            
+                        }
+                        
+                    }
+                    else  if action == .cancel  {
+                        completion(nil, error)
+                    }
+                }
             }
         }
-        
     }
     
+    public static func startCamera() async {
+        await fetchCurrentAuthSession()
+    }
     
+    private static func fetchCurrentAuthSession() async {
+         do {
+             let session = try await Amplify.Auth.fetchAuthSession()
+             print("Is user signed in - \(session.isSignedIn)")
+             
+             print(session)
+             if(session.isSignedIn == true) {
+                 faceLivenessApi()
+             }
+             else {
+                 await signIn()
+             }
+             
+         } catch let error as AuthError {
+             print("Fetch session failed with error \(error)")
+         } catch {
+             print("Unexpected error: \(error)")
+         }
+     }
+    
+    
+    private static func faceLivenessApi()  {
+        DispatchQueue.main.async {
+            var swiftUIView = FaceClass()
+            swiftUIView.sessoinIdValue = iPassSDKDataObjHandler.shared.sessionId
+            let hostingController = UIHostingController(rootView: swiftUIView)
+            hostingController.modalPresentationStyle = .fullScreen
+            iPassSDKDataObjHandler.shared.controller.present(hostingController, animated: true)
+            
+            NotificationCenter.default.addObserver(forName: NSNotification.Name("dismissSwiftUI"), object: nil, queue: nil) { (data) in
+                print("userInfo from swift ui class-->> ",data.userInfo?["status"] ?? "no status value")
+                hostingController.dismiss(animated: true, completion: nil)
+                
+                iPassHandler.getresultliveness() { (data, error) in
+                    if let error = error {
+                        print("Error: \(error)")
+                        return
+                    }
+                    
+                    if let data = data {
+                        if let dataString = String(data: data, encoding: .utf8) {
+                            iPassSDKDataObjHandler.shared.livenessResultData = dataString
+                           
+                            self.saveDataPostApi() { dataStr, _ in
+                                print("-=-=-=-==--=----get data api response-=-=-=-==--=----")
+                                print("-=-=-=-==--=----get data api response-=-=-=-==--=----")
+                                print(dataStr)
+                                print("-=-=-=-==--=----get data api response-=-=-=-==--=----")
+                                print("-=-=-=-==--=----get data api response-=-=-=-==--=----")
+                            }
+                            
+                            
+                        } else {
+                            print("Error converting data to string.")
+                        }
+                    }
+                    
+                }
+            }
+        }
+     }
     
     
     private static func generateRandomTwoDigitNumber() -> String {
@@ -365,85 +503,17 @@ public class iPassSDK {
     
     
     
-    public static func startCamera( controller: UIViewController) async {
-        
-        print(" UserLocalStore.shared.sessionId----" , UserLocalStore.shared.sessionId)
-        print("UserLocalStore.shared.token----" , UserLocalStore.shared.token)
-        
-        await fetchCurrentAuthSession(controller: controller)
-        
+    
+    
+   
+    
+    
 
-//        var swiftUIView = FaceClass()
-//        swiftUIView.sessoinIdValue = "2378462378"
-//        let hostingController = UIHostingController(rootView: swiftUIView)
-//        hostingController.modalPresentationStyle = .fullScreen
-//        controller.present(hostingController, animated: true)
-      
-        
-      
-    }
-    
-   private static func fetchCurrentAuthSession( controller: UIViewController) async {
-        do {
-            let session = try await Amplify.Auth.fetchAuthSession()
-            print("Is user signed in - \(session.isSignedIn)")
-            
-            print(session)
-            if(session.isSignedIn == true) {
-                faceLivenessApi(controller: controller)
-            }
-            else {
-                await signIn(controller: controller)
-            }
-            
-        } catch let error as AuthError {
-            print("Fetch session failed with error \(error)")
-        } catch {
-            print("Unexpected error: \(error)")
-        }
-    }
-    
-    
-   private static func faceLivenessApi(controller: UIViewController)  {
-//        guard let apiURL = URL(string: "https://ipassplus.csdevhub.com/api/v1/aws/create/session") else { return }
-       
-       DispatchQueue.main.async {
-           var swiftUIView = FaceClass()
-           swiftUIView.sessoinIdValue = UserLocalStore.shared.sessionId
-           let hostingController = UIHostingController(rootView: swiftUIView)
-           hostingController.modalPresentationStyle = .fullScreen
-           controller.present(hostingController, animated: true)
-           
-           NotificationCenter.default.addObserver(forName: NSNotification.Name("dismissSwiftUI"), object: nil, queue: nil) { (data) in
-               print("userInfo from swift ui class-->> ",data.userInfo?["status"] ?? "no status value")
-               hostingController.dismiss(animated: true, completion: nil)
-               
-               iPassHandler.getresultliveness(token: self.token, sessionId: UserLocalStore.shared.sessionId, sid: self.sid, email: self.email, auth_token:  UserLocalStore.shared.token)  { (data, error) in
-                   if let error = error {
-                       print("Error: \(error)")
-                       return
-                   }
-                   
-                   if let data = data {
-                       if let dataString = String(data: data, encoding: .utf8) {
-                           print("getresultliveness completed")
-                           print("getresultlivenessdataString--->",  dataString)
-                          // completion(dataString, nil)
-                           
-                       } else {
-                           print("Error converting data to string.")
-                       }
-                   }
-                   
-               }
-           }
-       }
-    }
     
     
     
     
-    private static func signIn(controller: UIViewController) async {
+    private static func signIn() async {
             do {
                 let signInResult = try await Amplify.Auth.signIn(
                     username: "testuser",
@@ -451,7 +521,7 @@ public class iPassSDK {
                     )
                 if signInResult.isSignedIn {
                     print("Sign in succeeded")
-                    await fetchCurrentAuthSession(controller: controller)
+                    await fetchCurrentAuthSession()
                 }
             } catch let error as AuthError {
                 print("Sign in failed \(error)")
@@ -472,24 +542,23 @@ public class iPassSDK {
     
     
     
-    private static func saveDataPostApi(isForCustom : Bool, userEmail:String, random:String,results:DocumentReaderResults, userToken:String, appToken:String,  completion: @escaping (String?, Error?) -> Void){
+    private static func saveDataPostApi(completion: @escaping (String, Error?) -> Void){
+        
         guard let apiURL = URL(string: "https://plusapi.ipass-mena.com/api/v1/ipass/sdk/data/save") else { return }
-        let jsondata = convertStringToJSON(results.rawResult)
         
         var request = URLRequest(url: apiURL)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        let dict:[String:Any] = [:]
+        
         let parameters: [String: Any] = [
-            "email": userEmail,
-            "idvData": jsondata ?? "",
-            "livenessdata": dict,
-            "randomid": random,
-            "userToken" : userToken,
-            "appToken" : appToken
+            "email": iPassSDKDataObjHandler.shared.email,
+            "idvData": convertStringToJSON(iPassSDKDataObjHandler.shared.resultScanData.rawResult) ?? "",
+            "livenessdata": convertStringToJSON(iPassSDKDataObjHandler.shared.livenessResultData) ?? "",
+            "randomid": iPassSDKDataObjHandler.shared.sid,
+            "userToken" : iPassSDKDataObjHandler.shared.authToken,
+            "appToken" : iPassSDKDataObjHandler.shared.token
         ]
         
-        //print(parameters)
         do {
             request.httpBody = try JSONSerialization.data(withJSONObject: parameters, options: .prettyPrinted)
         } catch let error {
@@ -509,57 +578,30 @@ public class iPassSDK {
             if status == 200 {
                 do {
                     if let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
-                        //   print("Response saveDataPostApi ---->>> ",json)
                         
-                        if isForCustom == true {
-                            iPassHandler.getFatchDataFromAPI(token: appToken, sessId: random) { (data, error) in
-                                if let error = error {
-                                    print("Error: \(error)")
-                                    return
-                                }
-                                
-                                if let data = data {
-                                    if let dataString = String(data: data, encoding: .utf8) {
-                                        print("getDataFromAPI completed")
-                                        completion(dataString, nil)
-                                        
-                                    } else {
-                                        print("Error converting data to string.")
-                                    }
-                                }
-                                
+                        iPassHandler.getDataFromAPI() { (data, error) in
+                            if let error = error {
+                                print("Error: \(error)")
+                                return
                             }
-                        } else {
-                            iPassHandler.getDataFromAPI(token: appToken, sessId: random) { (data, error) in
-                                if let error = error {
-                                    print("Error: \(error)")
-                                    return
+                            
+                            if let data = data {
+                                if let dataString = String(data: data, encoding: .utf8) {
+                                    print("getDataFromAPI completed")
+                                    
+                                    completion(dataString, nil)
+                                    
+                                } else {
+                                    print("Error converting data to string.")
                                 }
-                                
-                                if let data = data {
-                                    if let dataString = String(data: data, encoding: .utf8) {
-                                        print("getDataFromAPI completed")
-                                        completion(dataString, nil)
-                                        
-                                    } else {
-                                        print("Error converting data to string.")
-                                    }
-                                }
-                                
                             }
                         }
-                        
-                        
-                        
-                        
-                        
-                        
                     } else {
                         print("Failed to parse JSON response")
                     }
                 } catch let error {
                     print("Error parsing JSON response: \(error.localizedDescription)")
-                    completion(nil, error)
+                    completion("", error)
                 }
                 
             } else {
@@ -1021,7 +1063,6 @@ public class iPassSDK {
             print("data-=-=",results.textResult.fields[i].value)
             let value = results.textResult.fields[i].value
             dict = [fileds:value]
-            //            delegate?.getScanningData(result: dict)
             
         }
         

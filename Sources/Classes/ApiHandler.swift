@@ -86,7 +86,7 @@ public class iPassHandler {
                         print("Response",json)
                         if let user = json["user"] as? [String: Any] {
                             if let email = user["email"] as? String, let token = user["token"] as? String {
-                                UserLocalStore.shared.token = token
+                                iPassSDKDataObjHandler.shared.authToken = token
                                 completion(true, token)
                             } else {
                                 completion(false, "Email or token not found in user dictionary")
@@ -109,17 +109,17 @@ public class iPassHandler {
     }
 
 
-    public static func createSessionApi(email:String,auth_token:String,token:String, completion : @escaping (Bool) -> ()){
+    public static func createSessionApi(completion : @escaping (Bool) -> ()){
         
-        guard let apiURL = URL(string: "https://plusapi.ipass-mena.com/api/v1/ipass/plus/face/session/create?token=\(token)") else { return }
+        guard let apiURL = URL(string: "https://plusapi.ipass-mena.com/api/v1/ipass/plus/face/session/create?token=\(iPassSDKDataObjHandler.shared.token)") else { return }
         
         var request = URLRequest(url: apiURL)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         
         let parameters: [String: Any] = [
-            "email": email,
-            "auth_token": auth_token
+            "email": iPassSDKDataObjHandler.shared.email,
+            "auth_token": iPassSDKDataObjHandler.shared.authToken
         ]
         
         print("create session api url -->> ", apiURL)
@@ -147,7 +147,7 @@ public class iPassHandler {
                         print("createSessionApi response -->> ",json)
                         
                         if let sessionId = json["sessionId"] as? String {
-                            UserLocalStore.shared.sessionId = sessionId
+                            iPassSDKDataObjHandler.shared.sessionId = sessionId
                             print("sessionId ------>> ",sessionId)
                             completion(true)
                         }
@@ -169,18 +169,17 @@ public class iPassHandler {
         task.resume()
     }
     
-
     
-    
-    public static func getDataFromAPI(token: String, sessId: String, completion: @escaping (Data?, Error?) -> Void) {
+    public static func getDataFromAPI(completion: @escaping (Data?, Error?) -> Void) {
       
-        if var urlComponents = URLComponents(string: "https://plusapi.ipass-mena.com/api/v1/ipass/get/idCard/details") {
+        if var urlComponents = URLComponents(string: iPassSDKDataObjHandler.shared.isCustom
+                                             ? "https://plusapi.ipass-mena.com/api/v1/ipass/get/document/manipulated/result"
+                                             : "https://plusapi.ipass-mena.com/api/v1/ipass/get/idCard/details") {
             urlComponents.queryItems = [
-                URLQueryItem(name: "token", value: token),
-                URLQueryItem(name: "sessId", value: sessId)
+                URLQueryItem(name: "token", value: iPassSDKDataObjHandler.shared.token),
+                URLQueryItem(name: iPassSDKDataObjHandler.shared.isCustom ? "sesid" : "sessId", value: iPassSDKDataObjHandler.shared.sid)
             ]
             
-           // print("getDataFromAPI URL----->> ", urlComponents)
             if let url = urlComponents.url {
                 let task = URLSession.shared.dataTask(with: url) { (data, response, error) in
                     DispatchQueue.main.async {
@@ -197,29 +196,29 @@ public class iPassHandler {
     
     
     
-    
-    public static func getFatchDataFromAPI(token: String, sessId: String, completion: @escaping (Data?, Error?) -> Void) {
-      
-        if var urlComponents = URLComponents(string: "https://plusapi.ipass-mena.com/api/v1/ipass/get/document/manipulated/result") {
-            urlComponents.queryItems = [
-                URLQueryItem(name: "token", value: token),
-                URLQueryItem(name: "sesid", value: sessId)
-            ]
-            
-           // print("getDataFromAPI URL----->> ", urlComponents)
-            if let url = urlComponents.url {
-                let task = URLSession.shared.dataTask(with: url) { (data, response, error) in
-                    DispatchQueue.main.async {
-                        completion(data, error)
-                    }
-                }
-                
-                task.resume()
-            } else {
-                completion(nil, NSError(domain: "Invalid URL", code: 0, userInfo: nil))
-            }
-        }
-    }
+    // custom
+//    public static func getFatchDataFromAPI(token: String, sessId: String, completion: @escaping (Data?, Error?) -> Void) {
+//      
+//        if var urlComponents = URLComponents(string: "https://plusapi.ipass-mena.com/api/v1/ipass/get/document/manipulated/result") {
+//            urlComponents.queryItems = [
+//                URLQueryItem(name: "token", value: token),
+//                URLQueryItem(name: "sesid", value: sessId)
+//            ]
+//            
+//           // print("getDataFromAPI URL----->> ", urlComponents)
+//            if let url = urlComponents.url {
+//                let task = URLSession.shared.dataTask(with: url) { (data, response, error) in
+//                    DispatchQueue.main.async {
+//                        completion(data, error)
+//                    }
+//                }
+//                
+//                task.resume()
+//            } else {
+//                completion(nil, NSError(domain: "Invalid URL", code: 0, userInfo: nil))
+//            }
+//        }
+//    }
     
     
     public static func fetchDataliveness(token: String, sessId: String, completion: @escaping (Data?, Error?) -> Void) {
@@ -245,16 +244,15 @@ public class iPassHandler {
     }
     
     
-    public static func getresultliveness(token: String, sessionId: String, sid: String, email: String, auth_token: String, completion: @escaping (Data?, Error?) -> Void) {
-            
+    public static func getresultliveness(completion: @escaping (Data?, Error?) -> Void) {
+        
         if var urlComponents = URLComponents(string: "https://plusapi.ipass-mena.com/api/v1/ipass/session/result/") {
-            urlComponents.queryItems = [ //
-                
-                URLQueryItem(name: "sessionId", value: sessionId),
-                URLQueryItem(name: "sid", value: sid),
-                URLQueryItem(name: "email", value: email),
-                URLQueryItem(name: "token", value: token),
-                URLQueryItem(name: "auth_token", value: auth_token)
+            urlComponents.queryItems = [
+                URLQueryItem(name: "sessionId", value: iPassSDKDataObjHandler.shared.sessionId),
+                URLQueryItem(name: "sid", value: iPassSDKDataObjHandler.shared.sid),
+                URLQueryItem(name: "email", value: iPassSDKDataObjHandler.shared.email),
+                URLQueryItem(name: "token", value: iPassSDKDataObjHandler.shared.token),
+                URLQueryItem(name: "auth_token", value: iPassSDKDataObjHandler.shared.authToken)
             ]
             print("getresultliveness URL----->> ", urlComponents)
             if let url = urlComponents.url {
@@ -263,7 +261,6 @@ public class iPassHandler {
                         completion(data, error)
                     }
                 }
-                
                 task.resume()
             } else {
                 completion(nil, NSError(domain: "Invalid URL", code: 0, userInfo: nil))
