@@ -24,9 +24,18 @@ public class iPassSDK {
     public var resultData:DocumentReaderResults?
     
     private  static var resultScanData:DocumentReaderResults?
+    private static var userTokens : String?
+    private static var appTokens : String?
+    private static var userEmails : String?
     
     public static func fullProcessScanning(needLiveness : Bool? = true, userEmail:String, type: Int, controller: UIViewController, userToken:String, appToken:String, completion: @escaping (String?, Error?) -> Void) async {
-
+        print("userToken--->", userToken)
+        print("appToken--->", appToken)
+        print("userEmail---->", userEmail)
+        userTokens = userToken
+        appTokens = appToken
+        userEmails = userEmail
+        
         DispatchQueue.main.async {
             let randomNo = generateRandomTwoDigitNumber()
             print("random----->",  randomNo)
@@ -351,13 +360,13 @@ public class iPassSDK {
         let randomNo = generateRandomTwoDigitNumber()
         print("random----->",  randomNo)
         
-        saveDataPostApi(isForCustom : isForCustom, userEmail:userEmail, random: randomNo, results: datavalue, userToken: userToken, appToken: appToken, completion: { (result, error) in
-            if let result = result {
-                completion(result, nil)
-            } else {
-                completion(nil, error)
-            }
-        })
+//        saveDataPostApi(isForCustom : isForCustom, userEmail:userEmail, random: randomNo, results: datavalue, userToken: userToken, appToken: appToken, completion: { (result, error) in
+//            if let result = result {
+//                completion(result, nil)
+//            } else {
+//                completion(nil, error)
+//            }
+//        })
         
     }
     
@@ -365,7 +374,7 @@ public class iPassSDK {
     
     public static func startCamera( controller: UIViewController) async {
         
-        
+       
         await fetchCurrentAuthSession(controller: controller)
         
 
@@ -401,17 +410,39 @@ public class iPassSDK {
     }
     
     
-   private static func faceLivenessApi(controller: UIViewController) {
+   private static func faceLivenessApi(controller: UIViewController)  {
 //        guard let apiURL = URL(string: "https://ipassplus.csdevhub.com/api/v1/aws/create/session") else { return }
        
        DispatchQueue.main.async {
            var swiftUIView = FaceClass()
-           swiftUIView.sessoinIdValue = "bebc6f82-672f-4b58-ba85-8cb1b982b58e" //UserLocalStore.shared.sessionId
+           swiftUIView.sessoinIdValue = UserLocalStore.shared.sessionId
            let hostingController = UIHostingController(rootView: swiftUIView)
            hostingController.modalPresentationStyle = .fullScreen
            controller.present(hostingController, animated: true)
        }
       
+       let randomNo = generateRandomTwoDigitNumber()
+       print("random----->",  randomNo)
+       
+       iPassHandler.getresultliveness(token: appTokens ?? "", sessionId: UserLocalStore.shared.sessionId, sid: randomNo, email: userEmails ?? "", auth_token:  UserLocalStore.shared.token)  { (data, error) in
+           if let error = error {
+               print("Error: \(error)")
+               return
+           }
+           
+           if let data = data {
+               if let dataString = String(data: data, encoding: .utf8) {
+                   print("getDataFromAPI completed")
+                  // completion(dataString, nil)
+                   
+               } else {
+                   print("Error converting data to string.")
+               }
+           }
+           
+       }
+       
+       
     }
     
     
