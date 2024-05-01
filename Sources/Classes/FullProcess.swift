@@ -36,15 +36,15 @@ public class iPassSDK {
     
     public static func testAWS(controller: UIViewController) async {
         
-        DispatchQueue.main.async {
-            var swiftUIView = FaceClass()
-            swiftUIView.sessoinIdValue = UserLocalStore.shared.sessionId
-            let hostingController = UIHostingController(rootView: swiftUIView)
-            hostingController.modalPresentationStyle = .fullScreen
-            controller.present(hostingController, animated: true)
-        }
+//        DispatchQueue.main.async {
+//            var swiftUIView = FaceClass()
+//            swiftUIView.sessoinIdValue = UserLocalStore.shared.sessionId
+//            let hostingController = UIHostingController(rootView: swiftUIView)
+//            hostingController.modalPresentationStyle = .fullScreen
+//            controller.present(hostingController, animated: true)
+//        }
        
-       // await startCamera(controller: controller)
+        await startCamera(controller: controller)
     }
     
     public static func fullProcessScanning(needLiveness : Bool? = true, userEmail:String, type: Int, controller: UIViewController, userToken:String, appToken:String, completion: @escaping (String?, Error?) -> Void) async {
