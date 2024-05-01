@@ -29,6 +29,9 @@ public class iPassSDKDataObjHandler {
     var sessionId = String()
     var isCustom = Bool()
 }
+public protocol iPassSDKDelegate : AnyObject {
+    func getScanCompletionResult(result : String)
+}
 
 public class iPassSDK {
     public init() {}
@@ -36,7 +39,7 @@ public class iPassSDK {
     private var selectedScenario: String?
     private var sectionsData: [CustomizationSection] = []
     
-    
+    public static weak var delegate : iPassSDKDelegate?
     
     
     public static func aToACustomScan(needLiveness : Bool? = true, userEmail:String, type: Int, controller: UIViewController, userToken:String, appToken:String, completion: @escaping (String?, Error?) -> Void) async {
@@ -442,7 +445,8 @@ public class iPassSDK {
             NotificationCenter.default.addObserver(forName: NSNotification.Name("dismissSwiftUI"), object: nil, queue: nil) { (data) in
                 print("userInfo from swift ui class-->> ",data.userInfo?["status"] ?? "no status value")
                 hostingController.dismiss(animated: true, completion: nil)
-                
+                NotificationCenter.default.removeObserver(self, name: NSNotification.Name("dismissSwiftUI"), object: nil)
+
                 iPassHandler.getresultliveness() { (data, error) in
                     if let error = error {
                         print("Error: \(error)")
@@ -459,6 +463,7 @@ public class iPassSDK {
                                 print(dataStr)
                                 print("-=-=-=-==--=----get data api response-=-=-=-==--=----")
                                 print("-=-=-=-==--=----get data api response-=-=-=-==--=----")
+                                self.delegate?.getScanCompletionResult(result: dataStr)
                             }
                             
                             
