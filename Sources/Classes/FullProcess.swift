@@ -37,6 +37,8 @@ public class iPassSDK {
     private var sectionsData: [CustomizationSection] = []
     
     
+    
+    
     public static func aToACustomScan(needLiveness : Bool? = true, userEmail:String, type: Int, controller: UIViewController, userToken:String, appToken:String, completion: @escaping (String?, Error?) -> Void) async {
         
         iPassSDKDataObjHandler.shared.authToken = userToken
@@ -59,6 +61,7 @@ public class iPassSDK {
             iPassHandler.createSessionApi() { status in
                 if status == true {
                     DispatchQueue.main.async {
+                       
                         DocReader.shared.processParams.multipageProcessing = true
                         DocReader.shared.processParams.authenticityParams?.livenessParams?.checkHolo = false
                         DocReader.shared.processParams.authenticityParams?.livenessParams?.checkOVI = false
@@ -115,14 +118,15 @@ public class iPassSDK {
                                         }
                                     }
                                 } else {
-                                    getDocImages(isForCustom : false, userEmail:userEmail, datavalue: docResults ?? DocumentReaderResults(), userToken: userToken, appToken: appToken, completion: {(resuldata, error)in
-                                        if let result = resuldata{
-                                            completion(result, nil)
-                                        }else{
-                                            completion(nil, error)
-                                        }
-                                    })
+//                                    getDocImages(isForCustom : false, userEmail:userEmail, datavalue: docResults ?? DocumentReaderResults(), userToken: userToken, appToken: appToken, completion: {(resuldata, error)in
+//                                        if let result = resuldata{
+//                                            completion(result, nil)
+//                                        }else{
+//                                            completion(nil, error)
+//                                        }
+//                                    })
                                     DispatchQueue.main.async {
+                                        iPassSDKDataObjHandler.shared.resultScanData = docResults!
                                         Task { @MainActor in
                                             await startCamera()
                                         }
@@ -208,7 +212,6 @@ public class iPassSDK {
                             })
                             
                         }
-                       
                         
                     }
                     else  if action == .cancel  {
@@ -218,6 +221,7 @@ public class iPassSDK {
             }
         }
     }
+    
     
     public static func fullProcessScanning(needLiveness : Bool? = true, userEmail:String, type: Int, controller: UIViewController, userToken:String, appToken:String, completion: @escaping (String?, Error?) -> Void) async {
         
