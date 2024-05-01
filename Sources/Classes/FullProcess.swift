@@ -107,7 +107,7 @@ public class iPassSDK {
                                                 return
                                             }
                                             DispatchQueue.main.async {
-                                                iPassSDKDataObjHandler.shared.resultScanData = results!
+                                                iPassSDKDataObjHandler.shared.resultScanData = docResults!
                                                 Task { @MainActor in
                                                     await startCamera()
                                                 }
@@ -192,7 +192,7 @@ public class iPassSDK {
                                         return
                                     }
                                     DispatchQueue.main.async {
-                                        iPassSDKDataObjHandler.shared.resultScanData = results!
+                                        iPassSDKDataObjHandler.shared.resultScanData = docResults!
                                         self.saveDataPostApi() { dataStr, _ in
                                             print("-=-=-=-==--=----get data api response-=-=-=-==--=----")
                                             print("-=-=-=-==--=----get data api response-=-=-=-==--=----")
@@ -296,7 +296,7 @@ public class iPassSDK {
                                                 return
                                             }
                                             DispatchQueue.main.async {
-                                                iPassSDKDataObjHandler.shared.resultScanData = results!
+                                                iPassSDKDataObjHandler.shared.resultScanData = docResults!
                                                 Task { @MainActor in
                                                     await startCamera()
                                                 }
@@ -381,7 +381,7 @@ public class iPassSDK {
                                         return
                                     }
                                     DispatchQueue.main.async {
-                                        iPassSDKDataObjHandler.shared.resultScanData = results!
+                                        iPassSDKDataObjHandler.shared.resultScanData = docResults!
                                         self.saveDataPostApi() { dataStr, _ in
                                             print("-=-=-=-==--=----get data api response-=-=-=-==--=----")
                                             print("-=-=-=-==--=----get data api response-=-=-=-==--=----")
