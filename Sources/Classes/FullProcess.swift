@@ -208,7 +208,7 @@ public class iPassSDK {
                             })
                             
                         }
-                        iPassSDKDataObjHandler.shared.resultScanData = DocumentReaderResults()
+                       
                         
                     }
                     else  if action == .cancel  {
@@ -306,6 +306,7 @@ public class iPassSDK {
                                         }
                                     })
                                     DispatchQueue.main.async {
+                                        iPassSDKDataObjHandler.shared.resultScanData = DocumentReaderResults()
                                         Task { @MainActor in
                                             await startCamera()
                                         }
