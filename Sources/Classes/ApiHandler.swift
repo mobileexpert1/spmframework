@@ -86,7 +86,9 @@ public class iPassHandler {
                         print("Response",json)
                         if let user = json["user"] as? [String: Any] {
                             if let email = user["email"] as? String, let token = user["token"] as? String {
-                                iPassSDKDataObjHandler.shared.authToken = token
+                                DispatchQueue.main.async {
+                                    iPassSDKDataObjHandler.shared.authToken = token
+                                }
                                 completion(true, token)
                             } else {
                                 completion(false, "Email or token not found in user dictionary")
@@ -147,7 +149,9 @@ public class iPassHandler {
                         print("createSessionApi response -->> ",json)
                         
                         if let sessionId = json["sessionId"] as? String {
-                            iPassSDKDataObjHandler.shared.sessionId = sessionId
+                            DispatchQueue.main.async {
+                                iPassSDKDataObjHandler.shared.sessionId = sessionId
+                            }
                             print("sessionId ------>> ",sessionId)
                             completion(true)
                         }

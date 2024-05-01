@@ -40,12 +40,7 @@ public class iPassSDK {
     public static func aToACustomScan(needLiveness : Bool? = true, userEmail:String, type: Int, controller: UIViewController, userToken:String, appToken:String, completion: @escaping (String?, Error?) -> Void) async {
         
         
-        iPassSDKDataObjHandler.shared.authToken = userToken
-        iPassSDKDataObjHandler.shared.token = appToken
-        iPassSDKDataObjHandler.shared.sid = generateRandomTwoDigitNumber()
-        iPassSDKDataObjHandler.shared.email = userEmail
-        iPassSDKDataObjHandler.shared.controller = controller
-        iPassSDKDataObjHandler.shared.isCustom = true
+        
        
        
         if needLiveness == true {
@@ -61,6 +56,14 @@ public class iPassSDK {
             iPassHandler.createSessionApi() { status in
                 if status == true {
                     DispatchQueue.main.async {
+                        
+                        iPassSDKDataObjHandler.shared.authToken = userToken
+                        iPassSDKDataObjHandler.shared.token = appToken
+                        iPassSDKDataObjHandler.shared.sid = generateRandomTwoDigitNumber()
+                        iPassSDKDataObjHandler.shared.email = userEmail
+                        iPassSDKDataObjHandler.shared.controller = controller
+                        iPassSDKDataObjHandler.shared.isCustom = true
+                        
                         DocReader.shared.processParams.multipageProcessing = true
                         DocReader.shared.processParams.authenticityParams?.livenessParams?.checkHolo = false
                         DocReader.shared.processParams.authenticityParams?.livenessParams?.checkOVI = false
@@ -215,13 +218,6 @@ public class iPassSDK {
     public static func fullProcessScanning(needLiveness : Bool? = true, userEmail:String, type: Int, controller: UIViewController, userToken:String, appToken:String, completion: @escaping (String?, Error?) -> Void) async {
         
         
-        iPassSDKDataObjHandler.shared.authToken = userToken
-        iPassSDKDataObjHandler.shared.token = appToken
-        iPassSDKDataObjHandler.shared.sid = generateRandomTwoDigitNumber()
-        iPassSDKDataObjHandler.shared.email = userEmail
-        iPassSDKDataObjHandler.shared.controller = controller
-        iPassSDKDataObjHandler.shared.isCustom = false
-       
        
         if needLiveness == true {
             /*
@@ -236,6 +232,14 @@ public class iPassSDK {
             iPassHandler.createSessionApi() { status in
                 if status == true {
                     DispatchQueue.main.async {
+                        
+                        iPassSDKDataObjHandler.shared.authToken = userToken
+                        iPassSDKDataObjHandler.shared.token = appToken
+                        iPassSDKDataObjHandler.shared.sid = generateRandomTwoDigitNumber()
+                        iPassSDKDataObjHandler.shared.email = userEmail
+                        iPassSDKDataObjHandler.shared.controller = controller
+                        iPassSDKDataObjHandler.shared.isCustom = false
+                       
                         DocReader.shared.processParams.multipageProcessing = true
                         DocReader.shared.processParams.authenticityParams?.livenessParams?.checkHolo = false
                         DocReader.shared.processParams.authenticityParams?.livenessParams?.checkOVI = false
