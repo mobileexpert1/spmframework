@@ -28,24 +28,30 @@ public class DataBaseDownloading{
        
         
         
-        
-        let configPath = Bundle.module.url(forResource: "awsconfiguration", withExtension: "json")
-        
-        let customConfigPath = configPath?.absoluteString ?? ""
+        let configFileName = "amplifyconfiguration.json"
 
-        // Load configuration from the custom path
-        if let amplifyConfig = loadAmplifyConfiguration(from: customConfigPath) {
-            // Configure Amplify with the loaded configuration
-            do {
-                try Amplify.configure(amplifyConfig)
-            }
-            catch {
+        if let configFileURL = Bundle.module.url(forResource: configFileName, withExtension: nil) {
+            let configFilePath = configFileURL.path
+            print("Configuration file path: \(configFilePath)")
+            if let amplifyConfig = loadAmplifyConfiguration(from: configFilePath) {
+                // Configure Amplify with the loaded configuration
+                do {
+                    try Amplify.configure(amplifyConfig)
+                }
+                catch {
+                    print("Failed to configure Amplify with custom configuration.")
+                }
+            } else {
+                // Handle error loading or decoding configuration
                 print("Failed to configure Amplify with custom configuration.")
             }
         } else {
-            // Handle error loading or decoding configuration
-            print("Failed to configure Amplify with custom configuration.")
+            print("Failed to locate configuration file '\(configFileName)' in Bundle.module")
         }
+        
+        
+       
+     
         
         
         DocumentReaderService.shared.initializeDatabaseAndAPI(progress: { state in
