@@ -526,8 +526,8 @@ public class iPassSDK {
        
         
         
-        let randomNo = generateRandomTwoDigitNumber()
-        print("random----->",  randomNo)
+//        let randomNo = generateRandomTwoDigitNumber()
+//        print("random----->",  randomNo)
         
 //        saveDataPostApi(isForCustom : isForCustom, userEmail:userEmail, random: randomNo, results: datavalue, userToken: userToken, appToken: appToken, completion: { (result, error) in
 //            if let result = result {
