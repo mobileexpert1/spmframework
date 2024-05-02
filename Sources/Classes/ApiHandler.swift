@@ -248,7 +248,55 @@ public class iPassHandler {
     }
     
     
+    
+    
     public static func getresultliveness(completion: @escaping (Data?, Error?) -> Void) {
+        
+        guard let apiURL = URL(string: "https://plusapi.ipass-mena.com/api/v1/ipass/plus/session/result") else { return }
+
+        var request = URLRequest(url: apiURL)
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        
+        
+        let parameters: [String: Any] = [
+            "sessionId": iPassSDKDataObjHandler.shared.sessionId,
+            "sid": iPassSDKDataObjHandler.shared.sid,
+            "email": iPassSDKDataObjHandler.shared.email,
+            "token": iPassSDKDataObjHandler.shared.token,
+            "auth_token": iPassSDKDataObjHandler.shared.authToken
+        ]
+//        print("loginPostApi",apiURL)
+//        print("login parameters",parameters)
+        do {
+            request.httpBody = try JSONSerialization.data(withJSONObject: parameters, options: .prettyPrinted)
+        } catch let error {
+            print("Error serializing parameters: \(error.localizedDescription)")
+        }
+
+        let task = URLSession.shared.dataTask(with: request) { data, response, error in
+            guard let data = data, let response = response as? HTTPURLResponse, error == nil else {
+                print("Error: \(error?.localizedDescription ?? "Unknown error")")
+                return
+            }
+
+            let status = response.statusCode
+            print("Response status code: \(status)")
+
+            if status == 200 {
+                DispatchQueue.main.async {
+                    completion(data, error)
+                }
+            } else {
+                completion(nil, NSError(domain: "Invalid URL", code: 0, userInfo: nil))
+            }
+            
+        }
+        task.resume()
+    }
+    
+    
+    public static func getresultliveness123(completion: @escaping (Data?, Error?) -> Void) {
    
       //  if var urlComponents = URLComponents(string: "https://plusapi.ipass-mena.com/api/v1/ipass/session/result/") {
         if var urlComponents = URLComponents(string: "https://plusapi.ipass-mena.com/api/v1/ipass/plus/session/result") {
