@@ -598,8 +598,8 @@ public class iPassSDK {
             "idvData": documentDataJson ?? "",
             "livenessdata": livenessDataJson ?? "",
             "randomid": iPassSDKDataObjHandler.shared.sid,
-            "userToken" : iPassSDKDataObjHandler.shared.authToken,
-            "appToken" : iPassSDKDataObjHandler.shared.token
+//            "userToken" : iPassSDKDataObjHandler.shared.authToken,
+//            "appToken" : iPassSDKDataObjHandler.shared.token
         ]
         
         do {
