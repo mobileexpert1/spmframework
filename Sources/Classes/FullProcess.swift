@@ -609,7 +609,7 @@ public class iPassSDK {
         let parameters: [String: Any] = [
             "email": iPassSDKDataObjHandler.shared.email,
             "idvData": documentDataJson ?? "",
-            "livenessdata": livenessDataJson ?? "",
+            "livenessdata": iPassSDKDataObjHandler.shared.livenessResultData,
             "randomid": iPassSDKDataObjHandler.shared.sid,
 //            "userToken" : iPassSDKDataObjHandler.shared.authToken,
 //            "appToken" : iPassSDKDataObjHandler.shared.token
