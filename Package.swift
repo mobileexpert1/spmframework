@@ -46,6 +46,19 @@ let package = Package(
                 .copy("iPass"),
                 .copy("amplifyconfiguration"),
                 .copy("awsconfiguration"),
+                .process("Media.xcassets"),
+                .process("Certificates.bundle"),
+                .process("CertificatesPA.bundle"),
+                .process("CertificatesTA.bundle"),
+                .process("iPass.license"),
+                .process("amplifyconfiguration.json"),
+                .process("awsconfiguration.json"),
+                .process("Certificates"),
+                .process("CertificatesPA"),
+                .process("CertificatesTA"),
+                .process("iPass"),
+                .process("amplifyconfiguration"),
+                .process("awsconfiguration"),
                 
                 
               
