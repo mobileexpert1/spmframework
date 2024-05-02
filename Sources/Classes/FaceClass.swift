@@ -42,7 +42,7 @@ public struct FaceClass: View {
             onCompletion: { result in
                 switch result {
                 case .success:
-                    NotificationCenter.default.removeObserver(self, name: NSNotification.Name("dismissSwiftUI"), object: nil)
+                   
                     print("Success")
                     DispatchQueue.main.async {
                         self.faceLivenessStringValue = "1" // Now you can modify this
