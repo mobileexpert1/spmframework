@@ -601,7 +601,7 @@ public class iPassSDK {
 //            "userToken" : iPassSDKDataObjHandler.shared.authToken,
 //            "appToken" : iPassSDKDataObjHandler.shared.token
         ]
-        
+        print(parameters)
         do {
             request.httpBody = try JSONSerialization.data(withJSONObject: parameters, options: .prettyPrinted)
         } catch let error {
