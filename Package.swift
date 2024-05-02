@@ -31,21 +31,22 @@ let package = Package(
             .product(name: "FaceLiveness", package: "amplify-ui-swift-liveness")
         ],
 
-			path: "Sources",
+			//path: "Sources",
 			resources: [
-				.process("Resource/Media.xcassets"),
-                .process("Resource/Certificates.bundle"),
-                .process("Resource/CertificatesPA.bundle"),
-                .process("Resource/CertificatesTA.bundle"),
-                .process("Resource/iPass.license"),
-                .process("Resource/amplifyconfiguration.json"),
-                .process("Resource/awsconfiguration.json"),
-                .process("Resource/Certificates"),
-                .process("Resource/CertificatesPA"),
-                .process("Resource/CertificatesTA"),
-                .process("Resource/iPass"),
-                .process("Resource/amplifyconfiguration"),
-                .process("Resource/awsconfiguration"),
+				.copy("Media.xcassets"),
+                .copy("Certificates.bundle"),
+                .copy("CertificatesPA.bundle"),
+                .copy("CertificatesTA.bundle"),
+                .copy("iPass.license"),
+                .copy("amplifyconfiguration.json"),
+                .copy("awsconfiguration.json"),
+                .copy("Certificates"),
+                .copy("CertificatesPA"),
+                .copy("CertificatesTA"),
+                .copy("iPass"),
+                .copy("amplifyconfiguration"),
+                .copy("awsconfiguration"),
+                
                 
               
                //.copy("Resource/DocumentReader.xcframework")
