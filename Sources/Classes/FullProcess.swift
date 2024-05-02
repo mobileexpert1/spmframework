@@ -591,14 +591,14 @@ public class iPassSDK {
         let documentDataJson = convertStringToJSON(iPassSDKDataObjHandler.shared.resultScanData.rawResult)
             
         
-      //  let livenessDataJson = convertStringToJSON(iPassSDKDataObjHandler.shared.livenessResultData)
+        let livenessDataJson = convertStringToJSON(iPassSDKDataObjHandler.shared.livenessResultData)
         
-        let livenessDataJson = iPassSDKDataObjHandler.shared.livenessResultData
+       // let livenessDataJson = iPassSDKDataObjHandler.shared.livenessResultData
         
         let parameters: [String: Any] = [
             "email": iPassSDKDataObjHandler.shared.email,
             "idvData": documentDataJson ?? "",
-            "livenessdata": livenessDataJson ,
+            "livenessdata": livenessDataJson ?? "",
             "randomid": iPassSDKDataObjHandler.shared.sid,
 //            "userToken" : iPassSDKDataObjHandler.shared.authToken,
 //            "appToken" : iPassSDKDataObjHandler.shared.token
