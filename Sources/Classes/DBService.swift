@@ -39,7 +39,7 @@ final class DocumentReaderService {
             return
         }
         
-        guard let licenseData = try? Data(contentsOf: URL(fileURLWithPath: "licensePath")) else {
+        guard let licenseData = try? Data(contentsOf: URL(fileURLWithPath: licensePath.absoluteString)) else {
             progress(.error("Unable to read License File"))
             return
         }
