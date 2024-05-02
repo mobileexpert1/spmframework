@@ -454,11 +454,11 @@ public class iPassSDK {
             let hostingController = UIHostingController(rootView: swiftUIView)
             hostingController.modalPresentationStyle = .fullScreen
             iPassSDKDataObjHandler.shared.controller.present(hostingController, animated: true)
-            
+            NotificationCenter.default.removeObserver(self, name: NSNotification.Name("dismissSwiftUI"), object: nil)
             NotificationCenter.default.addObserver(forName: NSNotification.Name("dismissSwiftUI"), object: nil, queue: nil) { (data) in
                 print("userInfo from swift ui class-->> ",data.userInfo?["status"] ?? "no status value")
                 hostingController.dismiss(animated: true, completion: nil)
-                NotificationCenter.default.removeObserver(self, name: NSNotification.Name("dismissSwiftUI"), object: nil)
+              
 
                 iPassHandler.getresultliveness() { (data, error) in
                     if let error = error {
