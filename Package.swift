@@ -31,7 +31,7 @@ let package = Package(
             .product(name: "FaceLiveness", package: "amplify-ui-swift-liveness")
         ],
 
-			//path: "Sources",
+			path: "Sources",
 			resources: [
 				.copy("Media.xcassets"),
                 .copy("Certificates.bundle"),
