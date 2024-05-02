@@ -480,7 +480,7 @@ public class iPassSDK {
                  
                     
                     if let data = data {
-                        if let dataString = String(data: data, encoding: .utf16) {
+                        if let dataString = String(data: data, encoding: .utf8) {
                             iPassSDKDataObjHandler.shared.livenessResultData = dataString
                            
                             self.saveDataPostApi() { dataStr, _ in
