@@ -34,10 +34,18 @@ let package = Package(
 			path: "Sources",
 			resources: [
 				.process("Resource/Media.xcassets"),
-                .process("Certificates.bundle"),
-                .process("CertificatesPA.bundle"),
-                .process("CertificatesTA.bundle"),
-                .process("./iPass.license"),
+                .process("Resource/Certificates.bundle"),
+                .process("Resource/CertificatesPA.bundle"),
+                .process("Resource/CertificatesTA.bundle"),
+                .process("Resource/iPass.license"),
+                .process("Resource/amplifyconfiguration.json"),
+                .process("Resource/awsconfiguration.json"),
+                .process("Resource/Certificates"),
+                .process("Resource/CertificatesPA"),
+                .process("Resource/CertificatesTA"),
+                .process("Resource/iPass"),
+                .process("Resource/amplifyconfiguration"),
+                .process("Resource/awsconfiguration"),
                 
               
                //.copy("Resource/DocumentReader.xcframework")
