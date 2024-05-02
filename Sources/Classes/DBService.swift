@@ -39,11 +39,20 @@ final class DocumentReaderService {
             return
         }
         
-        guard let licenseData = try? Data(contentsOf: URL(fileURLWithPath: licensePath.absoluteString)) else {
-            progress(.error("Unable to read License File"))
-            return
-        }
+       // guard let dddd = try? Data(contentsOf: licensePath)
+        
+//        guard let licenseData = try? Data(contentsOf: URL(fileURLWithPath: licensePath.absoluteString)) else {
+//            progress(.error("Unable to read License File"))
+//            return
+//        }
 
+                
+                guard let licenseData = try? Data(contentsOf: licensePath) else {
+                    progress(.error("Unable to read License File"))
+                    return
+                }
+
+        
         DispatchQueue.global().async {
             DocReader.shared.prepareDatabase(
                 databaseID: self.kiPassDatabaseId,
