@@ -29,7 +29,7 @@ public class DataBaseDownloading{
         
         
         
-        let configPath = Bundle.module.url(forResource: "amplifyconfiguration", withExtension: "json")
+        let configPath = Bundle.module.url(forResource: "awsconfiguration", withExtension: "json")
         
         let customConfigPath = configPath?.absoluteString ?? ""
 
