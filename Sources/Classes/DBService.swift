@@ -29,12 +29,17 @@ final class DocumentReaderService {
     
     func initializeDatabaseAndAPI(progress: @escaping (State) -> Void) {
         
-        guard let licensePath = Bundle(for: type(of: self)).path(forResource: kiPassLicenseFile, ofType: nil) else {
+      //  guard let licensePath = Bundle(for: type(of: self)).path(forResource: kiPassLicenseFile, ofType: nil) else {
+        
+      //  if let url = Bundle.module.url(forResource: "LICENSE", withExtension: "txt"),
+
+            
+            guard let licensePath = Bundle.module.url(forResource: "iPass", withExtension: "license") else {
             progress(.error("Missing License File in Framework Bundle"))
             return
         }
         
-        guard let licenseData = try? Data(contentsOf: URL(fileURLWithPath: licensePath)) else {
+        guard let licenseData = try? Data(contentsOf: URL(fileURLWithPath: "licensePath")) else {
             progress(.error("Unable to read License File"))
             return
         }
