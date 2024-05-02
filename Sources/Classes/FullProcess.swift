@@ -21,7 +21,6 @@ public class iPassSDKDataObjHandler {
     
     var resultScanData = DocumentReaderResults()
     var livenessResultData = String()
-    var livenessResultDataAny = (Any).self
     var authToken = String()
     var token = String()
     var email = String()
@@ -479,58 +478,25 @@ public class iPassSDK {
                         return
                     }
                  
-                //    if let data = data {
-                        
-                    iPassSDKDataObjHandler.shared.livenessResultDataAny = nsdataToJSON(data: data! as NSData) as! (any Any).Type
-                        
-                        self.saveDataPostApi() { dataStr, _ in
-                            print("-=-=-=-==--=----get data api response-=-=-=-==--=----")
-                            print("-=-=-=-==--=----get data api response-=-=-=-==--=----")
-                            print(dataStr)
-                            print("-=-=-=-==--=----get data api response-=-=-=-==--=----")
-                            print("-=-=-=-==--=----get data api response-=-=-=-==--=----")
-                            self.delegate?.getScanCompletionResult(result: dataStr)
+                    
+                    if let data = data {
+                        if let dataString = String(data: data, encoding: .utf16) {
+                            iPassSDKDataObjHandler.shared.livenessResultData = dataString
+                           
+                            self.saveDataPostApi() { dataStr, _ in
+                                print("-=-=-=-==--=----get data api response-=-=-=-==--=----")
+                                print("-=-=-=-==--=----get data api response-=-=-=-==--=----")
+                                print(dataStr)
+                                print("-=-=-=-==--=----get data api response-=-=-=-==--=----")
+                                print("-=-=-=-==--=----get data api response-=-=-=-==--=----")
+                                self.delegate?.getScanCompletionResult(result: dataStr)
+                            }
+                            
+                            
+                        } else {
+                            print("Error converting data to string.")
                         }
-                        
-//                        if let dataString = String(data: data, encoding: .utf8) {
-//                            iPassSDKDataObjHandler.shared.livenessResultData = dataString
-//                           
-//                            self.saveDataPostApi() { dataStr, _ in
-//                                print("-=-=-=-==--=----get data api response-=-=-=-==--=----")
-//                                print("-=-=-=-==--=----get data api response-=-=-=-==--=----")
-//                                print(dataStr)
-//                                print("-=-=-=-==--=----get data api response-=-=-=-==--=----")
-//                                print("-=-=-=-==--=----get data api response-=-=-=-==--=----")
-//                                self.delegate?.getScanCompletionResult(result: dataStr)
-//                            }
-//                            
-//                            
-//                        } else {
-//                            print("Error converting data to string.")
-//                        }
-                   // }
-                    
-                    
-                    
-                    
-//                    if let data = data {
-//                        if let dataString = String(data: data, encoding: .utf8) {
-//                            iPassSDKDataObjHandler.shared.livenessResultData = dataString
-//                           
-//                            self.saveDataPostApi() { dataStr, _ in
-//                                print("-=-=-=-==--=----get data api response-=-=-=-==--=----")
-//                                print("-=-=-=-==--=----get data api response-=-=-=-==--=----")
-//                                print(dataStr)
-//                                print("-=-=-=-==--=----get data api response-=-=-=-==--=----")
-//                                print("-=-=-=-==--=----get data api response-=-=-=-==--=----")
-//                                self.delegate?.getScanCompletionResult(result: dataStr)
-//                            }
-//                            
-//                            
-//                        } else {
-//                            print("Error converting data to string.")
-//                        }
-//                    }
+                    }
                     
                 }
             }
@@ -637,9 +603,8 @@ public class iPassSDK {
         let documentDataJson = convertStringToJSON(iPassSDKDataObjHandler.shared.resultScanData.rawResult)
             
         
-        //let livenessDataJson = convertStringToJSON(iPassSDKDataObjHandler.shared.livenessResultData)
+        let livenessDataJson = convertStringToJSON(iPassSDKDataObjHandler.shared.livenessResultData)
         
-        let livenessDataJson = iPassSDKDataObjHandler.shared.livenessResultDataAny
         
         let parameters: [String: Any] = [
             "email": iPassSDKDataObjHandler.shared.email,
